@@ -1,6 +1,7 @@
 import 'package:charlie_customer_app/Screens/SplashScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +15,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Charlie - A discount shopee',
+      theme: ThemeData(
+        primaryColor: HexColor('#eabdd4'),
+        accentColor: HexColor('#f55d5d'),
+      ),
       home: SplashScreen(),
     );
   }
