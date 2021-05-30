@@ -10,17 +10,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen>
     with SingleTickerProviderStateMixin {
-  bool showSignIn = true;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  bool showSignIn = false;
 
   @override
   Widget build(BuildContext context) {
