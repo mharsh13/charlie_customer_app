@@ -13,9 +13,13 @@ import 'otp.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   final String phoneno;
+  final String username;
+  final bool logIn;
 
   OtpVerificationScreen({
     this.phoneno,
+    this.username,
+    this.logIn,
   });
 
   @override
@@ -60,7 +64,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           }
         });
 
-        if (userExist) {
+        if (widget.logIn ? !userExist : userExist) {
           FirebaseAuth.instance.signOut();
           showDialog(
             context: context,
@@ -69,7 +73,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               onWillPop: () {},
               child: AlertDialog(
                 title: Text(
-                  "User already exist!",
+                  widget.logIn ? "User not found!" : "User already exist!",
                   style: GoogleFonts.montserrat(
                     color: HexColor("#302a30"),
                     fontSize: 18,
@@ -77,7 +81,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   ),
                 ),
                 content: Text(
-                  "Try signing in",
+                  widget.logIn ? "Try signing up" : "Try signing in",
                   style: GoogleFonts.montserrat(
                     color: HexColor("#302a30"),
                     fontSize: 14,
@@ -112,20 +116,34 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           });
           return;
         } else {
-          var userInfo = {
-            "uid": value.user.uid,
-          };
+          if (widget.logIn) {
+            setState(() {
+              _isLoading = false;
+            });
+            Navigator.of(context).popUntil((route) => route.isFirst);
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => HomeScreen(),
+              ),
+            );
+          } else {
+            var userInfo = {
+              "uid": value.user.uid,
+              "username": widget.username,
+              "phoneNumber": widget.phoneno,
+            };
 
-          userCollection.doc(value.user.uid).set(userInfo);
-          setState(() {
-            _isLoading = false;
-          });
-          Navigator.of(context).popUntil((route) => route.isFirst);
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => HomeScreen(),
-            ),
-          );
+            userCollection.doc(value.user.uid).set(userInfo);
+            setState(() {
+              _isLoading = false;
+            });
+            Navigator.of(context).popUntil((route) => route.isFirst);
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => HomeScreen(),
+              ),
+            );
+          }
         }
       } else {
         showToast("Error validating OTP, try again", Colors.white);
@@ -146,7 +164,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     Fluttertoast.showToast(
         msg: message,
         toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.CENTER,
+        gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 2,
         backgroundColor: color,
         textColor: Colors.black,
@@ -175,7 +193,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             }
           });
 
-          if (userExist) {
+          if (widget.logIn ? !userExist : userExist) {
             FirebaseAuth.instance.signOut();
             showDialog(
               context: context,
@@ -184,7 +202,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 onWillPop: () {},
                 child: AlertDialog(
                   title: Text(
-                    "User already exist!",
+                    widget.logIn ? "User not found!" : "User already exist!",
                     style: GoogleFonts.montserrat(
                       color: HexColor("#302a30"),
                       fontSize: 18,
@@ -192,7 +210,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                     ),
                   ),
                   content: Text(
-                    "Try signing in",
+                    widget.logIn ? "Try signing up" : "Try signing in",
                     style: GoogleFonts.montserrat(
                       color: HexColor("#302a30"),
                       fontSize: 14,
@@ -227,20 +245,34 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             });
             return;
           } else {
-            var userInfo = {
-              "uid": value.user.uid,
-            };
+            if (widget.logIn) {
+              setState(() {
+                _isLoading = false;
+              });
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => HomeScreen(),
+                ),
+              );
+            } else {
+              var userInfo = {
+                "uid": value.user.uid,
+                "username": widget.username,
+                "phoneNumber": widget.phoneno,
+              };
 
-            userCollection.doc(value.user.uid).set(userInfo);
-            setState(() {
-              _isLoading = false;
-            });
-            Navigator.of(context).popUntil((route) => route.isFirst);
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => HomeScreen(),
-              ),
-            );
+              userCollection.doc(value.user.uid).set(userInfo);
+              setState(() {
+                _isLoading = false;
+              });
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => HomeScreen(),
+                ),
+              );
+            }
           }
         } else {
           showToast("Error validating OTP, try again", Colors.white);

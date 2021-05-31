@@ -15,6 +15,8 @@ class _LoginScreenState extends State<LoginScreen>
   TextEditingController phoneLogin = new TextEditingController();
   TextEditingController phoneSignUp = new TextEditingController();
   TextEditingController username = new TextEditingController();
+  final _formKeyLogin = GlobalKey<FormState>();
+  final _formKeySignUp = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -85,53 +87,83 @@ class _LoginScreenState extends State<LoginScreen>
                                   SizedBox(
                                     height: height * .03,
                                   ),
-                                  TextFormField(
-                                    controller: phoneLogin,
-                                    cursorColor: Colors.pink[100],
-                                    keyboardType: TextInputType.phone,
-                                    decoration: InputDecoration(
-                                      enabledBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Colors.pink[100],
+                                  Form(
+                                    key: _formKeyLogin,
+                                    child: TextFormField(
+                                      validator: (val) {
+                                        if (val.isEmpty) {
+                                          return "Enter in Field";
+                                        } else if (val.length < 10) {
+                                          return "Enter correct phone number";
+                                        } else
+                                          return null;
+                                      },
+                                      controller: phoneLogin,
+                                      cursorColor: Colors.pink[100],
+                                      keyboardType: TextInputType.phone,
+                                      decoration: InputDecoration(
+                                        enabledBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Colors.pink[100],
+                                          ),
                                         ),
+                                        labelText: 'Enter Phone Number',
+                                        prefixText: "+91",
                                       ),
-                                      labelText: 'Enter Phone Number',
-                                      prefixText: "+91",
                                     ),
                                   ),
                                   SizedBox(
                                     height: height * .05,
                                   ),
                                   Center(
-                                    child: Container(
-                                      width: width * 0.6,
-                                      padding: EdgeInsets.all(6),
-                                      decoration: BoxDecoration(
-                                        color: HexColor("#f55d5d")
-                                            .withOpacity(0.8),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Center(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "CONTINUE",
-                                              style: GoogleFonts.poppins(
-                                                color: Colors.white,
-                                                fontSize: 16,
+                                    child: InkWell(
+                                      onTap: () {
+                                        if (!_formKeyLogin.currentState
+                                            .validate()) {
+                                          return;
+                                        }
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                OtpVerificationScreen(
+                                              phoneno: "+91${phoneLogin.text}",
+                                              username: username.text,
+                                              logIn: true,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        width: width * 0.6,
+                                        padding: EdgeInsets.all(6),
+                                        decoration: BoxDecoration(
+                                          color: HexColor("#f55d5d")
+                                              .withOpacity(0.8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: Center(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "CONTINUE",
+                                                style: GoogleFonts.poppins(
+                                                  color: Colors.white,
+                                                  fontSize: 16,
+                                                ),
                                               ),
-                                            ),
-                                            SizedBox(
-                                              width: width * 0.02,
-                                            ),
-                                            Icon(
-                                              MdiIcons.arrowRight,
-                                              color: Colors.white,
-                                              size: 20,
-                                            )
-                                          ],
+                                              SizedBox(
+                                                width: width * 0.02,
+                                              ),
+                                              Icon(
+                                                MdiIcons.arrowRight,
+                                                color: Colors.white,
+                                                size: 20,
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -195,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen>
                               return SlideTransition(
                                 child: child,
                                 position: Tween<Offset>(
-                                  begin: Offset(1.5, 0),
+                                  begin: Offset(1, 0),
                                   end: Offset(0, 0),
                                 ).animate(animation),
                               );
@@ -224,31 +256,52 @@ class _LoginScreenState extends State<LoginScreen>
                                   SizedBox(
                                     height: height * .03,
                                   ),
-                                  TextFormField(
-                                    controller: username,
-                                    cursorColor: Colors.pink[100],
-                                    keyboardType: TextInputType.text,
-                                    decoration: InputDecoration(
-                                      enabledBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Colors.pink[100],
+                                  Form(
+                                    key: _formKeySignUp,
+                                    child: Column(
+                                      children: [
+                                        TextFormField(
+                                          validator: (val) {
+                                            if (val.isEmpty) {
+                                              return "Enter in Field";
+                                            } else
+                                              return null;
+                                          },
+                                          controller: username,
+                                          cursorColor: Colors.pink[100],
+                                          keyboardType: TextInputType.name,
+                                          decoration: InputDecoration(
+                                            enabledBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Colors.pink[100],
+                                              ),
+                                            ),
+                                            labelText: 'Enter Name',
+                                          ),
                                         ),
-                                      ),
-                                      labelText: 'Enter Name',
-                                    ),
-                                  ),
-                                  TextFormField(
-                                    controller: phoneSignUp,
-                                    cursorColor: Colors.pink[100],
-                                    keyboardType: TextInputType.phone,
-                                    decoration: InputDecoration(
-                                      enabledBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Colors.pink[100],
+                                        TextFormField(
+                                          validator: (val) {
+                                            if (val.isEmpty) {
+                                              return "Enter in Field";
+                                            } else if (val.length < 10) {
+                                              return "Enter correct phone number";
+                                            } else
+                                              return null;
+                                          },
+                                          controller: phoneSignUp,
+                                          cursorColor: Colors.pink[100],
+                                          keyboardType: TextInputType.phone,
+                                          decoration: InputDecoration(
+                                            enabledBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Colors.pink[100],
+                                              ),
+                                            ),
+                                            labelText: 'Enter Phone Number',
+                                            prefixText: "+91",
+                                          ),
                                         ),
-                                      ),
-                                      labelText: 'Enter Phone Number',
-                                      prefixText: "+91",
+                                      ],
                                     ),
                                   ),
                                   SizedBox(
@@ -257,11 +310,17 @@ class _LoginScreenState extends State<LoginScreen>
                                   Center(
                                     child: InkWell(
                                       onTap: () {
+                                        if (!_formKeySignUp.currentState
+                                            .validate()) {
+                                          return;
+                                        }
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
                                             builder: (context) =>
                                                 OtpVerificationScreen(
                                               phoneno: "+91${phoneSignUp.text}",
+                                              username: username.text,
+                                              logIn: false,
                                             ),
                                           ),
                                         );
