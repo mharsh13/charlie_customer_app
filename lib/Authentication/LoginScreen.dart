@@ -1,3 +1,4 @@
+import 'package:charlie_customer_app/Authentication/otpverificationscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -11,6 +12,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen>
     with TickerProviderStateMixin {
   bool showSignIn = false;
+  TextEditingController phoneLogin = new TextEditingController();
+  TextEditingController phoneSignUp = new TextEditingController();
+  TextEditingController username = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen>
                           ),
                           margin: EdgeInsets.all(0),
                           child: AnimatedSwitcher(
-                            duration: Duration(milliseconds: 500),
+                            duration: Duration(milliseconds: 300),
                             transitionBuilder: (child, animation) {
                               return SlideTransition(
                                 child: child,
@@ -82,6 +86,7 @@ class _LoginScreenState extends State<LoginScreen>
                                     height: height * .03,
                                   ),
                                   TextFormField(
+                                    controller: phoneLogin,
                                     cursorColor: Colors.pink[100],
                                     keyboardType: TextInputType.phone,
                                     decoration: InputDecoration(
@@ -190,14 +195,12 @@ class _LoginScreenState extends State<LoginScreen>
                               return SlideTransition(
                                 child: child,
                                 position: Tween<Offset>(
-                                  begin: Offset(1, 0),
+                                  begin: Offset(1.5, 0),
                                   end: Offset(0, 0),
-                                ).animate(
-                                  animation,
-                                ),
+                                ).animate(animation),
                               );
                             },
-                            duration: Duration(milliseconds: 500),
+                            duration: Duration(milliseconds: 300),
                             child: Container(
                               key: Key("2"),
                               height: height * 0.585,
@@ -222,6 +225,7 @@ class _LoginScreenState extends State<LoginScreen>
                                     height: height * .03,
                                   ),
                                   TextFormField(
+                                    controller: username,
                                     cursorColor: Colors.pink[100],
                                     keyboardType: TextInputType.text,
                                     decoration: InputDecoration(
@@ -234,6 +238,7 @@ class _LoginScreenState extends State<LoginScreen>
                                     ),
                                   ),
                                   TextFormField(
+                                    controller: phoneSignUp,
                                     cursorColor: Colors.pink[100],
                                     keyboardType: TextInputType.phone,
                                     decoration: InputDecoration(
@@ -250,35 +255,48 @@ class _LoginScreenState extends State<LoginScreen>
                                     height: height * .05,
                                   ),
                                   Center(
-                                    child: Container(
-                                      width: width * 0.6,
-                                      padding: EdgeInsets.all(6),
-                                      decoration: BoxDecoration(
-                                        color: HexColor("#f55d5d")
-                                            .withOpacity(0.8),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Center(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "CONTINUE",
-                                              style: GoogleFonts.poppins(
-                                                color: Colors.white,
-                                                fontSize: 16,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                OtpVerificationScreen(
+                                              phoneno: "+91${phoneSignUp.text}",
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        width: width * 0.6,
+                                        padding: EdgeInsets.all(6),
+                                        decoration: BoxDecoration(
+                                          color: HexColor("#f55d5d")
+                                              .withOpacity(0.8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: Center(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "CONTINUE",
+                                                style: GoogleFonts.poppins(
+                                                  color: Colors.white,
+                                                  fontSize: 16,
+                                                ),
                                               ),
-                                            ),
-                                            SizedBox(
-                                              width: width * 0.02,
-                                            ),
-                                            Icon(
-                                              MdiIcons.arrowRight,
-                                              color: Colors.white,
-                                              size: 20,
-                                            )
-                                          ],
+                                              SizedBox(
+                                                width: width * 0.02,
+                                              ),
+                                              Icon(
+                                                MdiIcons.arrowRight,
+                                                color: Colors.white,
+                                                size: 20,
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),

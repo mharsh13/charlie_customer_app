@@ -1,4 +1,5 @@
 import 'package:charlie_customer_app/Authentication/LoginScreen.dart';
+import 'package:charlie_customer_app/Screens/HomeScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -28,11 +29,11 @@ class _SplashScreenState extends State<SplashScreen> {
     }
     if (user != null) {
       Future.delayed(Duration(seconds: 3)).then((value) {
-        // Navigator.of(context).pushReplacement(
-        //   MaterialPageRoute(
-        //     builder: (BuildContext context) => HomeScreen(),
-        //   ),
-        // );
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (BuildContext context) => HomeScreen(),
+          ),
+        );
       });
       return;
     }

@@ -14,14 +14,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "774290683111-6bsuio4gligagncihlboe3vr6lpej5dv.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.charlie_customer_app",
-            "certificate_hash": "361f1e70beb3aaa644abc4113a0633037350a603"
-          }
-        },
-        {
           "client_id": "774290683111-n0t67bdh8953sb0k263ph2b0to1g0fh2.apps.googleusercontent.com",
           "client_type": 3
         }
