@@ -1,6 +1,7 @@
 import 'package:charlie_customer_app/Screens/DashboardScreen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -48,7 +49,8 @@ class _HomeScreenState extends State<HomeScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    MdiIcons.homeOutline,
+                    FeatherIcons.home,
+                    size: 18,
                   ),
                   SizedBox(
                     height: height * .005,
@@ -66,7 +68,8 @@ class _HomeScreenState extends State<HomeScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    MdiIcons.viewGridOutline,
+                    FeatherIcons.grid,
+                    size: 18,
                   ),
                   SizedBox(
                     height: height * .005,
@@ -84,7 +87,8 @@ class _HomeScreenState extends State<HomeScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    MdiIcons.heartOutline,
+                    FeatherIcons.heart,
+                    size: 18,
                   ),
                   SizedBox(
                     height: height * .005,
@@ -102,7 +106,8 @@ class _HomeScreenState extends State<HomeScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    MdiIcons.accountOutline,
+                    FeatherIcons.user,
+                    size: 18,
                   ),
                   SizedBox(
                     height: height * .005,
