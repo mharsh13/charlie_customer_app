@@ -1,4 +1,8 @@
+import 'package:charlie_customer_app/Models/CategoryModel.dart';
+import 'package:charlie_customer_app/Models/ProductModel.dart';
 import 'package:charlie_customer_app/Models/UserModel.dart';
+import 'package:charlie_customer_app/Models/VariantModel.dart';
+import 'package:charlie_customer_app/Providers/CategoryProvider.dart';
 import 'package:charlie_customer_app/Providers/UserProvider.dart';
 import 'package:charlie_customer_app/Screens/ProductDetailScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,6 +27,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   UserModel userInfo;
   bool _isLoading = false;
+  List<CategoryModel> categoryList = [];
+  List<ProductModel> productList;
 
   fetchUserInfo() async {
     setState(() {
@@ -38,15 +44,103 @@ class _DashboardScreenState extends State<DashboardScreen> {
         username: object["username"],
       );
       setState(() {
-        _isLoading = false;
         Provider.of<UserProvider>(context, listen: false).setUser(userInfo);
+        _isLoading = false;
+      });
+    });
+  }
+
+  fetchCategory() async {
+    setState(() {
+      _isLoading = true;
+    });
+    CollectionReference categoryCollection = firestore.collection("categories");
+    categoryCollection.orderBy("category.Date").snapshots().listen((event) {
+      categoryList = [];
+      event.docs.forEach((category) {
+        Map object = category.data();
+        categoryList.add(
+          CategoryModel(
+            id: category.id,
+            imageUrl: object["category"]["ImageUrl"],
+            name: object["category"]["CategoryName"],
+          ),
+        );
+      });
+      setState(() {
+        Provider.of<CategoryProvider>(context, listen: false)
+            .setCategoryList(categoryList);
+        _isLoading = false;
+      });
+    });
+  }
+
+  fetchProductInfo() async {
+    setState(() {
+      _isLoading = true;
+    });
+    CollectionReference productCollection = firestore.collection("products");
+    productCollection.orderBy("product.Date").snapshots().listen((event) {
+      productList = [];
+      event.docs.forEach((product) {
+        Map prodObject = product.data();
+        var imageUrls = prodObject["product"]["ImageUrl"];
+        List<String> images = [...imageUrls.map((el) => el.toString())];
+
+        productList.add(
+          ProductModel(
+            id: product.id,
+            brand: prodObject["product"]["brandName"],
+            category: prodObject["product"]["categoryName"],
+            desc: prodObject["product"]["description"],
+            gender: prodObject["product"]["genderName"],
+            imageUrl: images,
+            isFav: false,
+            name: prodObject["product"]["productName"],
+          ),
+        );
+        CollectionReference variantCollection = firestore
+            .collection("products")
+            .doc(product.id)
+            .collection("variants");
+        variantCollection.snapshots().listen((event) {
+          productList.forEach((prod) {
+            if (prod.id == product.id) {
+              prod.variantList = [];
+            }
+          });
+          event.docs.forEach((variant) {
+            Map variantObject = variant.data();
+            productList.forEach((prod) {
+              if (prod.id == product.id) {
+                prod.variantList.add(
+                  VariantModel(
+                    colorCode: variantObject["variant"]["colorCode"],
+                    colorName: variantObject["variant"]["colorName"],
+                    costPrice: variantObject["variant"]["costPrice"],
+                    id: variant.id,
+                    quantity: variantObject["variant"]["quantity"],
+                    sellingPrice: variantObject["variant"]["sellingPrice"],
+                    size: variantObject["variant"]["size"],
+                  ),
+                );
+              }
+            });
+          });
+          setState(() {});
+        });
+      });
+      setState(() {
+        _isLoading = false;
       });
     });
   }
 
   @override
   void initState() {
+    fetchCategory();
     fetchUserInfo();
+    fetchProductInfo();
     super.initState();
   }
 
@@ -91,8 +185,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      "Hello " +
-                          "${userInfo.username.substring(0, userInfo.username.indexOf(" "))}!",
+                      userInfo != null
+                          ? "Hello " +
+                              "${userInfo.username.substring(0, userInfo.username.indexOf(" "))}!"
+                          : "Hello!",
                       style: GoogleFonts.montserrat(
                         color: HexColor("#302a30").withOpacity(.8),
                         fontSize: 22,
@@ -211,8 +307,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               Container(
                                 height: height * 0.1,
                                 width: width * .3,
+                                padding: EdgeInsets.all(10),
                                 child: Image.network(
-                                  "https://i.picsum.photos/id/464/200/200.jpg?hmac=rT0rkzkukXVK3LYD1qHhc-Yqk0dFyIYoFk8wuNpCkAY",
+                                  "${categoryList[index].imageUrl}",
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -224,7 +321,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 padding: EdgeInsets.symmetric(horizontal: 8),
                                 child: Center(
                                   child: Text(
-                                    "Tshirt",
+                                    "${categoryList[index].name}",
                                     overflow: TextOverflow.ellipsis,
                                     style: GoogleFonts.montserrat(
                                       color:
@@ -239,7 +336,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                         ),
                       ),
-                      itemCount: 4,
+                      itemCount: categoryList.length,
                     ),
                   ),
                   SizedBox(
@@ -302,7 +399,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       height: height * 0.15,
                                       width: width,
                                       child: Image.network(
-                                        "https://i.picsum.photos/id/1061/200/300.jpg?hmac=wvuhffnNEQ5g9Q0f7LZiEvh6JEJqL3ppJuHT2M_YJLI",
+                                        "${productList[index].imageUrl[0]}",
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -328,7 +425,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   width: width,
                                   padding: EdgeInsets.symmetric(horizontal: 8),
                                   child: Text(
-                                    "Denim Shirt",
+                                    "${productList[index].name}",
                                     overflow: TextOverflow.ellipsis,
                                     style: GoogleFonts.montserrat(
                                       color:
@@ -342,7 +439,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   width: width,
                                   padding: EdgeInsets.symmetric(horizontal: 8),
                                   child: Text(
-                                    "Men/Shirts",
+                                    "${productList[index].gender}/${productList[index].category}",
                                     overflow: TextOverflow.ellipsis,
                                     style: GoogleFonts.montserrat(
                                       color: Colors.grey,
@@ -353,64 +450,71 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 SizedBox(
                                   height: height * .01,
                                 ),
-                                Container(
-                                  width: width,
-                                  padding: EdgeInsets.symmetric(horizontal: 2),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        MdiIcons.currencyInr,
-                                        size: 18,
+                                productList[index].variantList == null
+                                    ? Container()
+                                    : Container(
+                                        width: width,
+                                        padding:
+                                            EdgeInsets.symmetric(horizontal: 2),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              MdiIcons.currencyInr,
+                                              size: 18,
+                                            ),
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  "${productList[index].variantList[0].sellingPrice}",
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: GoogleFonts.montserrat(
+                                                    color: HexColor("#302a30"),
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: width * .01,
+                                                ),
+                                                Text(
+                                                  "${productList[index].variantList[0].costPrice}",
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: GoogleFonts.montserrat(
+                                                    color: Colors.grey,
+                                                    fontSize: 12,
+                                                    decoration: TextDecoration
+                                                        .lineThrough,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: width * .01,
+                                                ),
+                                                Text(
+                                                  "${(((double.parse(productList[index].variantList[0].costPrice) - double.parse(productList[index].variantList[0].sellingPrice)) / double.parse(productList[index].variantList[0].costPrice)) * 100).toStringAsFixed(0)}" +
+                                                      "% off",
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: GoogleFonts.montserrat(
+                                                    color: Colors.green,
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            "3000",
-                                            overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.montserrat(
-                                              color: HexColor("#302a30"),
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: width * .01,
-                                          ),
-                                          Text(
-                                            "3500",
-                                            overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.montserrat(
-                                              color: Colors.grey,
-                                              fontSize: 12,
-                                              decoration:
-                                                  TextDecoration.lineThrough,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: width * .01,
-                                          ),
-                                          Text(
-                                            "15% off",
-                                            overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.montserrat(
-                                              color: Colors.green,
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
                               ],
                             ),
                           ),
                         ),
                       ),
-                      itemCount: 10,
+                      itemCount: productList.length,
                     ),
                   ),
                 ],

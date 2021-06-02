@@ -1,3 +1,4 @@
+import 'package:charlie_customer_app/Providers/CategoryProvider.dart';
 import 'package:charlie_customer_app/Providers/UserProvider.dart';
 import 'package:charlie_customer_app/Screens/SplashScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -11,6 +12,9 @@ Future<void> main() async {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(
       create: (_) => UserProvider(),
+    ),
+    ChangeNotifierProvider(
+      create: (_) => CategoryProvider(),
     ),
   ], child: MyApp()));
 }
