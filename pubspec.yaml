@@ -45,7 +45,8 @@ dependencies:
   cached_network_image:
   url_launcher: 
   mailto:
-  provider: 
+  provider:
+  page_view_indicators: 
 
 dev_dependencies:
   flutter_test:

@@ -1,3 +1,4 @@
+import 'package:charlie_customer_app/Screens/ProductDetailScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -40,7 +41,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              height: height * .02,
+              height: height * .01,
             ),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -155,6 +156,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) => Card(
+                  elevation: 0,
                   child: Container(
                     width: width * .3,
                     child: Column(
@@ -225,117 +227,139 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
             Container(
               padding: EdgeInsets.only(left: 20, right: 20),
-              height: height * 0.4,
+              height: height * 1.3,
               child: GridView.builder(
+                physics: NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   childAspectRatio: 4 / 5,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 2,
+                  mainAxisSpacing: 5,
                 ),
-                itemBuilder: (context, index) => Card(
-                  child: Container(
-                    child: Column(
-                      children: [
-                        Stack(
-                          children: [
-                            Container(
-                              height: height * 0.15,
-                              width: width,
-                              child: Image.network(
-                                "https://i.picsum.photos/id/1061/200/300.jpg?hmac=wvuhffnNEQ5g9Q0f7LZiEvh6JEJqL3ppJuHT2M_YJLI",
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            Positioned(
-                              right: 10,
-                              bottom: 10,
-                              child: CircleAvatar(
-                                backgroundColor: Colors.white,
-                                radius: 16,
-                                child: Icon(
-                                  FeatherIcons.heart,
-                                  color: HexColor("#f55d5d"),
-                                  size: 18,
+                itemBuilder: (context, index) => InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => ProductDetailScreen(),
+                      ),
+                    );
+                  },
+                  child: Card(
+                    child: Container(
+                      child: Column(
+                        children: [
+                          Stack(
+                            children: [
+                              Container(
+                                height: height * 0.15,
+                                width: width,
+                                child: Image.network(
+                                  "https://i.picsum.photos/id/1061/200/300.jpg?hmac=wvuhffnNEQ5g9Q0f7LZiEvh6JEJqL3ppJuHT2M_YJLI",
+                                  fit: BoxFit.cover,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: height * .01,
-                        ),
-                        Container(
-                          width: width,
-                          padding: EdgeInsets.symmetric(horizontal: 8),
-                          child: Text(
-                            "Denim Shirt",
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.montserrat(
-                              color: HexColor("#302a30").withOpacity(.9),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          width: width,
-                          padding: EdgeInsets.symmetric(horizontal: 8),
-                          child: Text(
-                            "Men/Shirts",
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.montserrat(
-                              color: Colors.grey,
-                              fontSize: 10,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: height * .01,
-                        ),
-                        Container(
-                          width: width,
-                          padding: EdgeInsets.symmetric(horizontal: 8),
-                          child: Row(
-                            children: [
-                              Icon(
-                                MdiIcons.currencyInr,
-                                size: 18,
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "300",
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.montserrat(
-                                      color: HexColor("#302a30"),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                              Positioned(
+                                right: 10,
+                                bottom: 10,
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  radius: 16,
+                                  child: Icon(
+                                    FeatherIcons.heart,
+                                    color: HexColor("#f55d5d"),
+                                    size: 18,
                                   ),
-                                  SizedBox(
-                                    width: width * .02,
-                                  ),
-                                  Text(
-                                    "350",
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.montserrat(
-                                      color: Colors.grey,
-                                      fontSize: 12,
-                                      decoration: TextDecoration.lineThrough,
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
+                          SizedBox(
+                            height: height * .01,
+                          ),
+                          Container(
+                            width: width,
+                            padding: EdgeInsets.symmetric(horizontal: 8),
+                            child: Text(
+                              "Denim Shirt",
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.montserrat(
+                                color: HexColor("#302a30").withOpacity(.9),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            width: width,
+                            padding: EdgeInsets.symmetric(horizontal: 8),
+                            child: Text(
+                              "Men/Shirts",
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.montserrat(
+                                color: Colors.grey,
+                                fontSize: 10,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: height * .01,
+                          ),
+                          Container(
+                            width: width,
+                            padding: EdgeInsets.symmetric(horizontal: 2),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  MdiIcons.currencyInr,
+                                  size: 18,
+                                ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "3000",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.montserrat(
+                                        color: HexColor("#302a30"),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: width * .01,
+                                    ),
+                                    Text(
+                                      "3500",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.montserrat(
+                                        color: Colors.grey,
+                                        fontSize: 12,
+                                        decoration: TextDecoration.lineThrough,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: width * .01,
+                                    ),
+                                    Text(
+                                      "15% off",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.montserrat(
+                                        color: Colors.green,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-                itemCount: 4,
+                itemCount: 10,
               ),
             ),
           ],
