@@ -500,28 +500,35 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       });
                     });
                   },
-                  child: Center(
+                  child: Card(
+                    margin: EdgeInsets.only(right: 20),
+                    elevation:
+                        selectedVariantModel.colorCode == colorList[index]
+                            ? 5
+                            : 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        18,
+                      ),
+                    ),
                     child: Container(
-                      width: width * 0.1,
-                      height: height * 0.1,
-                      padding: EdgeInsets.all(10),
-                      margin: EdgeInsets.only(right: 10),
+                      width: selectedVariantModel.colorCode == colorList[index]
+                          ? width * 0.1
+                          : width * 0.06,
+                      padding: EdgeInsets.all(1),
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color: Colors.grey,
+                          color:
+                              selectedVariantModel.colorCode == colorList[index]
+                                  ? Colors.transparent
+                                  : Colors.grey,
                         ),
-                        color: HexColor("${colorList[index]}"),
-                        borderRadius: BorderRadius.circular(
-                          10,
-                        ),
+                        shape: BoxShape.circle,
                       ),
-                      child: Center(
-                        child: Icon(
-                          selectedVariantModel.colorCode == colorList[index]
-                              ? FeatherIcons.check
-                              : null,
-                          color: Colors.black,
-                          size: 16,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: HexColor("${colorList[index]}"),
+                          shape: BoxShape.circle,
                         ),
                       ),
                     ),
