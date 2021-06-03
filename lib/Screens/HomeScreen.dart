@@ -37,13 +37,17 @@ class _HomeScreenState extends State<HomeScreen>
     });
     CollectionReference userCollection =
         firestore.collection("User Information");
-    await userCollection.doc(_firebaseAuth.currentUser.uid).get().then((doc) {
-      Map object = doc.data();
-      userInfo = UserModel(
-        id: doc.id,
-        phoneNumber: object["phoneNumber"],
-        username: object["username"],
-      );
+    userCollection.snapshots().listen((event) {
+      event.docs.forEach((doc) {
+        Map object = doc.data();
+        if (doc.id == _firebaseAuth.currentUser.uid) {
+          userInfo = UserModel(
+            id: doc.id,
+            phoneNumber: object["phoneNumber"],
+            username: object["username"],
+          );
+        }
+      });
       setState(() {
         Provider.of<UserProvider>(context, listen: false).setUser(userInfo);
         _isLoading = false;

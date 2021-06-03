@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charlie_customer_app/Models/CategoryModel.dart';
 import 'package:charlie_customer_app/Models/ProductModel.dart';
 import 'package:charlie_customer_app/Models/UserModel.dart';
@@ -204,8 +205,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 height: height * 0.1,
                                 width: width * .3,
                                 padding: EdgeInsets.all(10),
-                                child: Image.network(
-                                  "${categoryList[index].imageUrl}",
+                                child: CachedNetworkImage(
+                                  imageUrl: "${categoryList[index].imageUrl}",
+                                  placeholder: (context, url) => SpinKitRing(
+                                    color: Colors.grey,
+                                    lineWidth: 3,
+                                  ),
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -296,8 +301,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     Container(
                                       height: height * 0.15,
                                       width: width,
-                                      child: Image.network(
-                                        "${productList[index].imageUrl[0]}",
+                                      child: CachedNetworkImage(
+                                        imageUrl:
+                                            "${productList[index].imageUrl[0]}",
+                                        placeholder: (context, url) =>
+                                            SpinKitRing(
+                                          color: Colors.grey,
+                                          lineWidth: 3,
+                                        ),
                                         fit: BoxFit.cover,
                                       ),
                                     ),

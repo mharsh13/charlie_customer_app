@@ -1,7 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charlie_customer_app/Models/ProductModel.dart';
 import 'package:charlie_customer_app/Models/VariantModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -292,8 +294,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     controller: _pageController,
                     itemBuilder: (context, index) {
                       return Container(
-                        child: Image.network(
-                          "${widget.product.imageUrl[index]}",
+                        child: CachedNetworkImage(
+                          imageUrl: "${widget.product.imageUrl[index]}",
+                          placeholder: (context, url) => SpinKitRing(
+                            color: Colors.grey,
+                            lineWidth: 3,
+                          ),
                           fit: BoxFit.cover,
                         ),
                       );
