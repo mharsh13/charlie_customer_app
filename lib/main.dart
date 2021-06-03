@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 
+import 'Providers/ProductProvider.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -15,6 +17,9 @@ Future<void> main() async {
     ),
     ChangeNotifierProvider(
       create: (_) => CategoryProvider(),
+    ),
+     ChangeNotifierProvider(
+      create: (_) => ProductProvider(),
     ),
   ], child: MyApp()));
 }

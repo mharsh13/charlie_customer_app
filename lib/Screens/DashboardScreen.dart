@@ -3,6 +3,7 @@ import 'package:charlie_customer_app/Models/ProductModel.dart';
 import 'package:charlie_customer_app/Models/UserModel.dart';
 import 'package:charlie_customer_app/Models/VariantModel.dart';
 import 'package:charlie_customer_app/Providers/CategoryProvider.dart';
+import 'package:charlie_customer_app/Providers/ProductProvider.dart';
 import 'package:charlie_customer_app/Providers/UserProvider.dart';
 import 'package:charlie_customer_app/Screens/ProductDetailScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -131,6 +132,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         });
       });
       setState(() {
+        Provider.of<ProductProvider>(context, listen: false)
+            .setProductList(productList);
         _isLoading = false;
       });
     });
@@ -385,7 +388,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => ProductDetailScreen(),
+                              builder: (context) => ProductDetailScreen(
+                                product: productList[index],
+                              ),
                             ),
                           );
                         },

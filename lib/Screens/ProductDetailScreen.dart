@@ -1,3 +1,5 @@
+import 'package:charlie_customer_app/Models/ProductModel.dart';
+import 'package:charlie_customer_app/Models/VariantModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,6 +8,8 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:page_view_indicators/circle_page_indicator.dart';
 
 class ProductDetailScreen extends StatefulWidget {
+  final ProductModel product;
+  ProductDetailScreen({this.product});
   @override
   _ProductDetailScreenState createState() => _ProductDetailScreenState();
 }
@@ -13,6 +17,11 @@ class ProductDetailScreen extends StatefulWidget {
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   final _pageController = PageController();
   final _currentPageNotifier = ValueNotifier<int>(0);
+  List<VariantModel> filteredList = [];
+  List<String> sizeList = [];
+  List<String> colorList = [];
+  VariantModel selectedVariantModel = new VariantModel();
+  var selectedQuantity = 1;
 
   _buildCircleIndicator5() {
     return Padding(
@@ -26,13 +35,50 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               selectedSize: 12,
               dotColor: Colors.white,
               selectedDotColor: HexColor("#f55d5d"),
-              itemCount: 4,
+              itemCount: widget.product.imageUrl.length,
               currentPageNotifier: _currentPageNotifier,
             ),
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    filteredList = widget.product.variantList;
+    sizeList = [];
+    colorList = [];
+    filteredList.forEach((element) {
+      if (sizeList.contains(element.size)) {
+      } else {
+        sizeList.add(element.size);
+      }
+    });
+
+    selectedVariantModel.size = sizeList[0];
+    filteredList.forEach((element) {
+      if (element.size == selectedVariantModel.size) {
+        colorList.add(element.colorCode);
+      }
+    });
+    selectedVariantModel.colorCode = colorList[0];
+    filteredList.forEach((element) {
+      if (element.colorCode == selectedVariantModel.colorCode) {
+        selectedVariantModel.colorName = element.colorName;
+      }
+    });
+
+    filteredList.forEach((element) {
+      if (element.size == selectedVariantModel.size &&
+          element.colorCode == selectedVariantModel.colorCode) {
+        selectedVariantModel.costPrice = element.costPrice;
+        selectedVariantModel.sellingPrice = element.sellingPrice;
+        selectedVariantModel.quantity = element.quantity;
+      }
+    });
+
+    super.initState();
   }
 
   @override
@@ -88,7 +134,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               size: 12,
                             ),
                             onPressed: () {
-                              setState(() {});
+                              setState(() {
+                                if (selectedQuantity > 1) {
+                                  selectedQuantity--;
+                                }
+                              });
                             },
                           ),
                         ),
@@ -98,7 +148,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         width: 40,
                         child: Center(
                           child: Text(
-                            "4",
+                            "$selectedQuantity",
                             style: GoogleFonts.quicksand(
                               color: Colors.grey,
                               fontSize: 18,
@@ -124,7 +174,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               size: 12,
                             ),
                             onPressed: () {
-                              setState(() {});
+                              setState(() {
+                                if (selectedQuantity <
+                                    int.parse(selectedVariantModel.quantity)) {
+                                  selectedQuantity++;
+                                }
+                              });
                             },
                           ),
                         ),
@@ -153,7 +208,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            "300",
+                            "${(int.parse(selectedVariantModel.sellingPrice)) * selectedQuantity}",
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.montserrat(
                               color: HexColor("#302a30"),
@@ -165,7 +220,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             width: width * .02,
                           ),
                           Text(
-                            "350",
+                            "${(int.parse(selectedVariantModel.costPrice)) * selectedQuantity}",
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.montserrat(
                               color: Colors.grey,
@@ -233,12 +288,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     onPageChanged: (int index) {
                       _currentPageNotifier.value = index;
                     },
-                    itemCount: 4,
+                    itemCount: widget.product.imageUrl.length,
                     controller: _pageController,
                     itemBuilder: (context, index) {
                       return Container(
                         child: Image.network(
-                          "https://i.picsum.photos/id/1061/200/300.jpg?hmac=wvuhffnNEQ5g9Q0f7LZiEvh6JEJqL3ppJuHT2M_YJLI",
+                          "${widget.product.imageUrl[index]}",
                           fit: BoxFit.cover,
                         ),
                       );
@@ -275,7 +330,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   Container(
                     width: width * 0.6,
                     child: Text(
-                      "Denim shirt",
+                      "${widget.product.name}",
                       style: GoogleFonts.montserrat(
                         color: HexColor("#302a30").withOpacity(.9),
                         fontSize: 18,
@@ -306,7 +361,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               padding: EdgeInsets.symmetric(horizontal: 20),
               width: width,
               child: Text(
-                "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ",
+                "${widget.product.desc}",
                 style: GoogleFonts.montserrat(
                   color: Colors.grey,
                   fontSize: 10,
@@ -327,65 +382,152 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ),
             ),
             Container(
-              height: height * 0.08,
-              padding: EdgeInsets.only(left: 20),
+              height: height * 0.1,
+              padding: EdgeInsets.only(left: 20, top: 20, bottom: 20),
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) => Center(
+                itemBuilder: (context, index) => GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedVariantModel.size = sizeList[index];
+                      colorList = [];
+                      filteredList.forEach((element) {
+                        if (element.size == selectedVariantModel.size) {
+                          colorList.add(element.colorCode);
+                        }
+                      });
+                      selectedVariantModel.colorCode = colorList[0];
+                      filteredList.forEach((element) {
+                        if (element.colorCode ==
+                            selectedVariantModel.colorCode) {
+                          selectedVariantModel.colorName = element.colorName;
+                        }
+                      });
+                      filteredList.forEach((element) {
+                        if (element.size == selectedVariantModel.size &&
+                            element.colorCode ==
+                                selectedVariantModel.colorCode) {
+                          selectedVariantModel.costPrice = element.costPrice;
+                          selectedVariantModel.sellingPrice =
+                              element.sellingPrice;
+                          selectedVariantModel.quantity = element.quantity;
+                        }
+                      });
+                    });
+                  },
                   child: Container(
+                    width: width * 0.2,
                     padding: EdgeInsets.all(10),
                     margin: EdgeInsets.only(right: 10),
                     decoration: BoxDecoration(
-                      color: Colors.grey[200],
+                      color: selectedVariantModel.size == sizeList[index]
+                          ? Colors.white
+                          : Colors.grey[100],
+                      border: selectedVariantModel.size == sizeList[index]
+                          ? Border.all(
+                              color: HexColor("#f55d5d").withOpacity(.8),
+                            )
+                          : Border.all(
+                              color: Colors.white,
+                            ),
                       borderRadius: BorderRadius.circular(
                         10,
                       ),
                     ),
-                    child: Text(
-                      "XL",
-                      style: GoogleFonts.montserrat(
-                        color: Colors.black,
+                    child: Center(
+                      child: Text(
+                        "${sizeList[index]}",
+                        style: GoogleFonts.montserrat(
+                          color: selectedVariantModel.size == sizeList[index]
+                              ? HexColor("#f55d5d").withOpacity(.8)
+                              : Colors.black,
+                        ),
                       ),
                     ),
                   ),
                 ),
-                itemCount: 4,
+                itemCount: sizeList.length,
               ),
             ),
-            Container(
-              width: width,
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                "Item Color",
-                style: GoogleFonts.montserrat(
-                  color: HexColor("#302a30").withOpacity(.9),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    "Item Color",
+                    style: GoogleFonts.montserrat(
+                      color: HexColor("#302a30").withOpacity(.9),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
-              ),
+                Container(
+                  child: Text(
+                    selectedVariantModel.colorName,
+                    style: GoogleFonts.montserrat(
+                      color: Colors.grey,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
             ),
             Container(
-              height: height * 0.08,
-              padding: EdgeInsets.only(left: 20),
+              height: height * 0.1,
+              padding: EdgeInsets.only(left: 20, top: 20, bottom: 20),
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) => Center(
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    margin: EdgeInsets.only(right: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.yellow,
-                      borderRadius: BorderRadius.circular(
-                        10,
+                itemBuilder: (context, index) => GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedVariantModel.colorCode = colorList[index];
+                      filteredList.forEach((element) {
+                        if (element.colorCode ==
+                            selectedVariantModel.colorCode) {
+                          selectedVariantModel.colorName = element.colorName;
+                        }
+                      });
+                      filteredList.forEach((element) {
+                        if (element.size == selectedVariantModel.size &&
+                            element.colorCode ==
+                                selectedVariantModel.colorCode) {
+                          selectedVariantModel.costPrice = element.costPrice;
+                          selectedVariantModel.sellingPrice =
+                              element.sellingPrice;
+                          selectedVariantModel.quantity = element.quantity;
+                        }
+                      });
+                    });
+                  },
+                  child: Center(
+                    child: Container(
+                      width: width * 0.1,
+                      height: height * 0.1,
+                      padding: EdgeInsets.all(10),
+                      margin: EdgeInsets.only(right: 10),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey,
+                        ),
+                        color: HexColor("${colorList[index]}"),
+                        borderRadius: BorderRadius.circular(
+                          10,
+                        ),
                       ),
-                    ),
-                    child: Icon(
-                      FeatherIcons.check,
-                      size: 14,
+                      child: Center(
+                        child: Icon(
+                          selectedVariantModel.colorCode == colorList[index]
+                              ? FeatherIcons.check
+                              : null,
+                          color: Colors.black,
+                          size: 16,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-                itemCount: 4,
+                itemCount: colorList.length,
               ),
             )
           ],
