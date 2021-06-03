@@ -24,126 +24,19 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   TextEditingController searchController = new TextEditingController();
   var searchfocusNode = FocusNode();
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   UserModel userInfo;
   bool _isLoading = false;
   List<CategoryModel> categoryList = [];
   List<ProductModel> productList;
 
-  fetchUserInfo() async {
-    setState(() {
-      _isLoading = true;
-    });
-    CollectionReference userCollection =
-        firestore.collection("User Information");
-    await userCollection.doc(_firebaseAuth.currentUser.uid).get().then((doc) {
-      Map object = doc.data();
-      userInfo = UserModel(
-        id: doc.id,
-        phoneNumber: object["phoneNumber"],
-        username: object["username"],
-      );
-      setState(() {
-        Provider.of<UserProvider>(context, listen: false).setUser(userInfo);
-        _isLoading = false;
-      });
-    });
-  }
-
-  fetchCategory() async {
-    setState(() {
-      _isLoading = true;
-    });
-    CollectionReference categoryCollection = firestore.collection("categories");
-    categoryCollection.orderBy("category.Date").snapshots().listen((event) {
-      categoryList = [];
-      event.docs.forEach((category) {
-        Map object = category.data();
-        categoryList.add(
-          CategoryModel(
-            id: category.id,
-            imageUrl: object["category"]["ImageUrl"],
-            name: object["category"]["CategoryName"],
-          ),
-        );
-      });
-      setState(() {
-        Provider.of<CategoryProvider>(context, listen: false)
-            .setCategoryList(categoryList);
-        _isLoading = false;
-      });
-    });
-  }
-
-  fetchProductInfo() async {
-    setState(() {
-      _isLoading = true;
-    });
-    CollectionReference productCollection = firestore.collection("products");
-    productCollection.orderBy("product.Date").snapshots().listen((event) {
-      productList = [];
-      event.docs.forEach((product) {
-        Map prodObject = product.data();
-        var imageUrls = prodObject["product"]["ImageUrl"];
-        List<String> images = [...imageUrls.map((el) => el.toString())];
-
-        productList.add(
-          ProductModel(
-            id: product.id,
-            brand: prodObject["product"]["brandName"],
-            category: prodObject["product"]["categoryName"],
-            desc: prodObject["product"]["description"],
-            gender: prodObject["product"]["genderName"],
-            imageUrl: images,
-            isFav: false,
-            name: prodObject["product"]["productName"],
-          ),
-        );
-        CollectionReference variantCollection = firestore
-            .collection("products")
-            .doc(product.id)
-            .collection("variants");
-        variantCollection.snapshots().listen((event) {
-          productList.forEach((prod) {
-            if (prod.id == product.id) {
-              prod.variantList = [];
-            }
-          });
-          event.docs.forEach((variant) {
-            Map variantObject = variant.data();
-            productList.forEach((prod) {
-              if (prod.id == product.id) {
-                prod.variantList.add(
-                  VariantModel(
-                    colorCode: variantObject["variant"]["colorCode"],
-                    colorName: variantObject["variant"]["colorName"],
-                    costPrice: variantObject["variant"]["costPrice"],
-                    id: variant.id,
-                    quantity: variantObject["variant"]["quantity"],
-                    sellingPrice: variantObject["variant"]["sellingPrice"],
-                    size: variantObject["variant"]["size"],
-                  ),
-                );
-              }
-            });
-          });
-          setState(() {});
-        });
-      });
-      setState(() {
-        Provider.of<ProductProvider>(context, listen: false)
-            .setProductList(productList);
-        _isLoading = false;
-      });
-    });
-  }
-
   @override
   void initState() {
-    fetchCategory();
-    fetchUserInfo();
-    fetchProductInfo();
+    userInfo = Provider.of<UserProvider>(context, listen: false).userInfo;
+    categoryList =
+        Provider.of<CategoryProvider>(context, listen: false).categoryList;
+    productList =
+        Provider.of<ProductProvider>(context, listen: false).productList;
     super.initState();
   }
 
