@@ -18,7 +18,7 @@ Future<void> main() async {
     ChangeNotifierProvider(
       create: (_) => CategoryProvider(),
     ),
-     ChangeNotifierProvider(
+    ChangeNotifierProvider(
       create: (_) => ProductProvider(),
     ),
   ], child: MyApp()));

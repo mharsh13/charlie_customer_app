@@ -29,7 +29,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   UserModel userInfo;
   bool _isLoading = false;
   List<CategoryModel> categoryList = [];
-  List<ProductModel> productList;
+  List<ProductModel> productList = [];
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   @override
   void initState() {
@@ -315,13 +317,48 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     Positioned(
                                       right: 10,
                                       bottom: 10,
-                                      child: CircleAvatar(
-                                        backgroundColor: Colors.white,
-                                        radius: 16,
-                                        child: Icon(
-                                          FeatherIcons.heart,
-                                          color: HexColor("#f55d5d"),
-                                          size: 18,
+                                      child: InkWell(
+                                        onTap: () {
+                                          final User user = auth.currentUser;
+                                          final uid = user.uid;
+                                          setState(() {
+                                            productList[index].isFav =
+                                                !productList[index].isFav;
+                                          });
+                                          if (productList[index].isFav) {
+                                            CollectionReference quotes =
+                                                firestore
+                                                    .collection("products");
+                                            quotes
+                                                .doc(productList[index].id)
+                                                .update({
+                                              "favorites": {
+                                                uid: true,
+                                              }
+                                            });
+                                          } else {
+                                            CollectionReference quotes =
+                                                firestore
+                                                    .collection("products");
+                                            quotes
+                                                .doc(productList[index].id)
+                                                .update({
+                                              "favorites": {
+                                                uid: false,
+                                              }
+                                            });
+                                          }
+                                        },
+                                        child: CircleAvatar(
+                                          backgroundColor: Colors.white,
+                                          radius: 16,
+                                          child: Icon(
+                                            productList[index].isFav
+                                                ? MdiIcons.heart
+                                                : MdiIcons.heartOutline,
+                                            color: HexColor("#f55d5d"),
+                                            size: 18,
+                                          ),
                                         ),
                                       ),
                                     ),

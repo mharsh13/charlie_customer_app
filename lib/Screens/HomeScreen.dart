@@ -91,7 +91,10 @@ class _HomeScreenState extends State<HomeScreen>
         Map prodObject = product.data();
         var imageUrls = prodObject["product"]["ImageUrl"];
         List<String> images = [...imageUrls.map((el) => el.toString())];
-
+        bool isFavorite = false;
+        if (prodObject.containsKey("favorites")) {
+          isFavorite = prodObject["favorites"][_firebaseAuth.currentUser.uid];
+        }
         productList.add(
           ProductModel(
             id: product.id,
@@ -100,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen>
             desc: prodObject["product"]["description"],
             gender: prodObject["product"]["genderName"],
             imageUrl: images,
-            isFav: false,
+            isFav: isFavorite,
             name: prodObject["product"]["productName"],
           ),
         );

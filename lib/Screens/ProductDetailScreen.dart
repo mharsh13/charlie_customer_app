@@ -1,6 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charlie_customer_app/Models/ProductModel.dart';
 import 'package:charlie_customer_app/Models/VariantModel.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -24,6 +27,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   List<String> colorList = [];
   VariantModel selectedVariantModel = new VariantModel();
   var selectedQuantity = 1;
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   _buildCircleIndicator5() {
     return Padding(
@@ -350,8 +355,38 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         IconButton(
-                          icon: Icon(FeatherIcons.heart),
-                          onPressed: () {},
+                          icon: Icon(
+                            widget.product.isFav
+                                ? MdiIcons.heart
+                                : MdiIcons.heartOutline,
+                            color: widget.product.isFav
+                                ? HexColor("#f55d5d")
+                                : Colors.black,
+                          ),
+                          onPressed: () {
+                            final User user = auth.currentUser;
+                            final uid = user.uid;
+                            setState(() {
+                              widget.product.isFav = !widget.product.isFav;
+                            });
+                            if (widget.product.isFav) {
+                              CollectionReference quotes =
+                                  firestore.collection("products");
+                              quotes.doc(widget.product.id).update({
+                                "favorites": {
+                                  uid: true,
+                                }
+                              });
+                            } else {
+                              CollectionReference quotes =
+                                  firestore.collection("products");
+                              quotes.doc(widget.product.id).update({
+                                "favorites": {
+                                  uid: false,
+                                }
+                              });
+                            }
+                          },
                         ),
                         IconButton(
                           icon: Icon(FeatherIcons.share2),
