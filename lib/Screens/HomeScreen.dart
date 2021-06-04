@@ -1,8 +1,12 @@
+import 'package:charlie_customer_app/Models/BrandModel.dart';
 import 'package:charlie_customer_app/Models/CategoryModel.dart';
+import 'package:charlie_customer_app/Models/GenderModel.dart';
 import 'package:charlie_customer_app/Models/ProductModel.dart';
 import 'package:charlie_customer_app/Models/UserModel.dart';
 import 'package:charlie_customer_app/Models/VariantModel.dart';
+import 'package:charlie_customer_app/Providers/BrandProvider.dart';
 import 'package:charlie_customer_app/Providers/CategoryProvider.dart';
+import 'package:charlie_customer_app/Providers/GenderProvider.dart';
 import 'package:charlie_customer_app/Providers/ProductProvider.dart';
 import 'package:charlie_customer_app/Providers/UserProvider.dart';
 import 'package:charlie_customer_app/Screens/DashboardScreen.dart';
@@ -29,7 +33,9 @@ class _HomeScreenState extends State<HomeScreen>
   UserModel userInfo;
   bool _isLoading = false;
   List<CategoryModel> categoryList = [];
-  List<ProductModel> productList;
+  List<ProductModel> productList = [];
+  List<BrandModel> brandList = [];
+  List<GenderModel> genderList = [];
 
   fetchUserInfo() async {
     setState(() {
@@ -80,6 +86,56 @@ class _HomeScreenState extends State<HomeScreen>
     });
   }
 
+  fetchBrand() async {
+    setState(() {
+      _isLoading = true;
+    });
+    CollectionReference categoryCollection = firestore.collection("brands");
+    categoryCollection.orderBy("brand.Date").snapshots().listen((event) {
+      brandList = [];
+      event.docs.forEach((brand) {
+        Map object = brand.data();
+        brandList.add(
+          BrandModel(
+            id: brand.id,
+            imageUrl: object["brand"]["ImageUrl"],
+            name: object["brand"]["BrandName"],
+          ),
+        );
+      });
+      setState(() {
+        Provider.of<BrandProvider>(context, listen: false)
+            .setBrandList(brandList);
+        _isLoading = false;
+      });
+    });
+  }
+
+  fetchGender() async {
+    setState(() {
+      _isLoading = true;
+    });
+    CollectionReference categoryCollection = firestore.collection("gender");
+    categoryCollection.orderBy("gender.Date").snapshots().listen((event) {
+      genderList = [];
+      event.docs.forEach((gender) {
+        Map object = gender.data();
+        genderList.add(
+          GenderModel(
+            id: gender.id,
+            imageUrl: object["gender"]["ImageUrl"],
+            name: object["gender"]["GenderName"],
+          ),
+        );
+      });
+      setState(() {
+        Provider.of<GenderProvider>(context, listen: false)
+            .setGenderList(genderList);
+        _isLoading = false;
+      });
+    });
+  }
+
   fetchProductInfo() async {
     setState(() {
       _isLoading = true;
@@ -95,6 +151,7 @@ class _HomeScreenState extends State<HomeScreen>
         if (prodObject.containsKey("favorites")) {
           isFavorite = prodObject["favorites"][_firebaseAuth.currentUser.uid];
         }
+
         productList.add(
           ProductModel(
             id: product.id,
@@ -105,6 +162,7 @@ class _HomeScreenState extends State<HomeScreen>
             imageUrl: images,
             isFav: isFavorite,
             name: prodObject["product"]["productName"],
+            date: prodObject["product"]["Date"],
           ),
         );
         CollectionReference variantCollection = firestore
@@ -153,6 +211,8 @@ class _HomeScreenState extends State<HomeScreen>
     fetchCategory();
     fetchUserInfo();
     fetchProductInfo();
+    fetchBrand();
+    fetchGender();
   }
 
 //dispose method for good practice.

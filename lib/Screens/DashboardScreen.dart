@@ -2,10 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charlie_customer_app/Models/CategoryModel.dart';
 import 'package:charlie_customer_app/Models/ProductModel.dart';
 import 'package:charlie_customer_app/Models/UserModel.dart';
-import 'package:charlie_customer_app/Models/VariantModel.dart';
 import 'package:charlie_customer_app/Providers/CategoryProvider.dart';
 import 'package:charlie_customer_app/Providers/ProductProvider.dart';
 import 'package:charlie_customer_app/Providers/UserProvider.dart';
+import 'package:charlie_customer_app/Screens/AllProductsScreen.dart';
 import 'package:charlie_customer_app/Screens/ProductDetailScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -40,6 +40,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Provider.of<CategoryProvider>(context, listen: false).categoryList;
     productList =
         Provider.of<ProductProvider>(context, listen: false).productList;
+    if (productList != []) {
+      productList.shuffle();
+    }
+
     super.initState();
   }
 
@@ -47,6 +51,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: HexColor("#F7EBF0"),
       appBar: AppBar(
@@ -259,12 +264,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        Text(
-                          "See All",
-                          style: GoogleFonts.montserrat(
-                            color: HexColor("#f55d5d").withOpacity(.9),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => AllProductsScreen(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            "See All",
+                            style: GoogleFonts.montserrat(
+                              color: HexColor("#f55d5d").withOpacity(.9),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ],

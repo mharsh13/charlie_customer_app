@@ -1,4 +1,5 @@
 import 'package:charlie_customer_app/Models/VariantModel.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProductModel {
   String name;
@@ -10,6 +11,7 @@ class ProductModel {
   bool isFav;
   List<VariantModel> variantList;
   String id;
+  Timestamp date;
   ProductModel(
       {this.brand,
       this.category,
@@ -19,5 +21,6 @@ class ProductModel {
       this.imageUrl,
       this.isFav,
       this.name,
+      this.date,
       this.variantList});
 }

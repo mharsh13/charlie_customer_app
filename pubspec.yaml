@@ -46,7 +46,8 @@ dependencies:
   url_launcher: 
   mailto:
   provider:
-  page_view_indicators: 
+  page_view_indicators:
+  modal_bottom_sheet: ^2.0.0 
 
 dev_dependencies:
   flutter_test:

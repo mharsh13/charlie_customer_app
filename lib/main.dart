@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 
+import 'Providers/BrandProvider.dart';
+import 'Providers/GenderProvider.dart';
 import 'Providers/ProductProvider.dart';
 
 Future<void> main() async {
@@ -20,6 +22,12 @@ Future<void> main() async {
     ),
     ChangeNotifierProvider(
       create: (_) => ProductProvider(),
+    ),
+    ChangeNotifierProvider(
+      create: (_) => BrandProvider(),
+    ),
+    ChangeNotifierProvider(
+      create: (_) => GenderProvider(),
     ),
   ], child: MyApp()));
 }
