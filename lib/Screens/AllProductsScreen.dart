@@ -1,5 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:charlie_customer_app/Models/BrandModel.dart';
+import 'package:charlie_customer_app/Models/CategoryModel.dart';
+import 'package:charlie_customer_app/Models/GenderModel.dart';
 import 'package:charlie_customer_app/Models/ProductModel.dart';
+import 'package:charlie_customer_app/Providers/BrandProvider.dart';
+import 'package:charlie_customer_app/Providers/CategoryProvider.dart';
+import 'package:charlie_customer_app/Providers/GenderProvider.dart';
 import 'package:charlie_customer_app/Providers/ProductProvider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,6 +17,7 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_select/smart_select.dart';
 
 import 'ProductDetailScreen.dart';
 
@@ -25,15 +32,30 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
   SingingCharacter _sort = SingingCharacter.latest;
   List<ProductModel> productList = [];
   List<ProductModel> filteredList = [];
+  List<CategoryModel> categoryList = [];
+  List<BrandModel> brandList = [];
+  List<GenderModel> genderList = [];
   final FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  List<String> categoryValue = [];
+  List<S2Choice<String>> categoriesChips = [];
+
   @override
   void initState() {
     productList =
         Provider.of<ProductProvider>(context, listen: false).productList;
+    categoryList =
+        Provider.of<CategoryProvider>(context, listen: false).categoryList;
+    brandList = Provider.of<BrandProvider>(context, listen: false).brandList;
+    genderList = Provider.of<GenderProvider>(context, listen: false).genderList;
     filteredList = productList;
     filteredList.sort((a, b) => b.date.compareTo(a.date));
+    categoryList.asMap().forEach((index, category) {
+      categoriesChips.add(
+        S2Choice<String>(value: category.name, title: category.name),
+      );
+    });
     super.initState();
   }
 
@@ -178,7 +200,204 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
               color: Colors.white,
               size: 20,
             ),
-            onPressed: () {},
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (context) => StatefulBuilder(
+                  builder: (context, setModalState) => Container(
+                    height: height,
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              child: Text(
+                                "FILTER BY",
+                                style: GoogleFonts.montserrat(
+                                  color: Colors.grey,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              iconSize: 22,
+                              splashRadius: 20,
+                              icon: Icon(
+                                MdiIcons.close,
+                                size: 22,
+                                color: HexColor("#f55d5d").withOpacity(0.8),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            )
+                          ],
+                        ),
+                        Divider(),
+                        Container(
+                          height: height * 0.35,
+                          child: ListView(
+                            children: [
+                              SizedBox(
+                                height: height * 0.01,
+                              ),
+                              SmartSelect<String>.multiple(
+                                title: "Categories",
+                                modalTitle: "Choose Categories",
+                                tileBuilder: (context, state) => Container(
+                                  child: InkWell(
+                                    onTap: () {
+                                      state.showModal();
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "Categories",
+                                              style: GoogleFonts.roboto(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            Icon(
+                                              FeatherIcons.chevronRight,
+                                              color: Colors.grey,
+                                              size: 20,
+                                            )
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: height * 0.02,
+                                        ),
+                                        if (categoryValue.isNotEmpty)
+                                          Container(
+                                            width: width,
+                                            child: Text.rich(
+                                              TextSpan(
+                                                children: [
+                                                  for (var string
+                                                      in categoryValue)
+                                                    TextSpan(
+                                                      text: string + " ",
+                                                    )
+                                                ],
+                                                text: "Selected Categories : ",
+                                                style: GoogleFonts.roboto(
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                              textAlign: TextAlign.left,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                value: categoryValue,
+                                choiceItems: categoriesChips,
+                                choiceType: S2ChoiceType.chips,
+                                modalType: S2ModalType.bottomSheet,
+                                choiceStyle: S2ChoiceStyle(
+                                  activeColor:
+                                      HexColor("#f55d5d").withOpacity(0.8),
+                                ),
+                                onChange: (state) =>
+                                    setState(() => categoryValue = state.value),
+                              ),
+                              Divider(),
+                            ],
+                          ),
+                        ),
+                        Divider(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                categoryValue = [];
+
+                                setModalState(() {});
+                              },
+                              child: Container(
+                                width: width * 0.3,
+                                padding: EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: Colors.grey[200],
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Clear Filters",
+                                    style: GoogleFonts.poppins(
+                                      color:
+                                          HexColor("#f55d5d").withOpacity(0.8),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                if (categoryValue.isNotEmpty) {
+                                  setState(() {
+                                    filteredList = [];
+                                    categoryValue.forEach((category) {
+                                      productList.forEach((product) {
+                                        if (product.category == category) {
+                                          filteredList.add(product);
+                                        }
+                                      });
+                                    });
+                                  });
+                                } else {
+                                  setState(() {
+                                    filteredList = productList;
+                                  });
+                                }
+                                Navigator.of(context).pop();
+                              },
+                              child: Container(
+                                width: width * 0.3,
+                                padding: EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  color: HexColor("#f55d5d").withOpacity(0.8),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Show results",
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),

@@ -40,9 +40,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Provider.of<CategoryProvider>(context, listen: false).categoryList;
     productList =
         Provider.of<ProductProvider>(context, listen: false).productList;
-    if (productList != []) {
-      productList.shuffle();
-    }
 
     super.initState();
   }
