@@ -40,6 +40,10 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   List<String> categoryValue = [];
   List<S2Choice<String>> categoriesChips = [];
+  List<String> brandValue = [];
+  List<S2Choice<String>> brandsChips = [];
+  List<String> genderValue = [];
+  List<S2Choice<String>> genderChips = [];
 
   @override
   void initState() {
@@ -54,6 +58,16 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
     categoryList.asMap().forEach((index, category) {
       categoriesChips.add(
         S2Choice<String>(value: category.name, title: category.name),
+      );
+    });
+    brandList.asMap().forEach((index, brand) {
+      brandsChips.add(
+        S2Choice<String>(value: brand.name, title: brand.name),
+      );
+    });
+    genderList.asMap().forEach((index, gender) {
+      genderChips.add(
+        S2Choice<String>(value: gender.name, title: gender.name),
       );
     });
     super.initState();
@@ -242,9 +256,6 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                           height: height * 0.35,
                           child: ListView(
                             children: [
-                              SizedBox(
-                                height: height * 0.01,
-                              ),
                               SmartSelect<String>.multiple(
                                 title: "Categories",
                                 modalTitle: "Choose Categories",
@@ -316,6 +327,146 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                                     setState(() => categoryValue = state.value),
                               ),
                               Divider(),
+                              SmartSelect<String>.multiple(
+                                title: "Brands",
+                                modalTitle: "Choose Brands",
+                                tileBuilder: (context, state) => Container(
+                                  child: InkWell(
+                                    onTap: () {
+                                      state.showModal();
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "Brands",
+                                              style: GoogleFonts.roboto(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            Icon(
+                                              FeatherIcons.chevronRight,
+                                              color: Colors.grey,
+                                              size: 20,
+                                            )
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: height * 0.02,
+                                        ),
+                                        if (brandValue.isNotEmpty)
+                                          Container(
+                                            width: width,
+                                            child: Text.rich(
+                                              TextSpan(
+                                                children: [
+                                                  for (var string in brandValue)
+                                                    TextSpan(
+                                                      text: string + " ",
+                                                    )
+                                                ],
+                                                text: "Selected Brands : ",
+                                                style: GoogleFonts.roboto(
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                              textAlign: TextAlign.left,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                value: brandValue,
+                                choiceItems: brandsChips,
+                                choiceType: S2ChoiceType.chips,
+                                modalType: S2ModalType.bottomSheet,
+                                choiceStyle: S2ChoiceStyle(
+                                  activeColor:
+                                      HexColor("#f55d5d").withOpacity(0.8),
+                                ),
+                                onChange: (state) =>
+                                    setState(() => brandValue = state.value),
+                              ),
+                              Divider(),
+                              SmartSelect<String>.multiple(
+                                title: "Gender",
+                                modalTitle: "Choose Gender",
+                                tileBuilder: (context, state) => Container(
+                                  child: InkWell(
+                                    onTap: () {
+                                      state.showModal();
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "Gender",
+                                              style: GoogleFonts.roboto(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            Icon(
+                                              FeatherIcons.chevronRight,
+                                              color: Colors.grey,
+                                              size: 20,
+                                            )
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: height * 0.02,
+                                        ),
+                                        if (genderValue.isNotEmpty)
+                                          Container(
+                                            width: width,
+                                            child: Text.rich(
+                                              TextSpan(
+                                                children: [
+                                                  for (var string
+                                                      in genderValue)
+                                                    TextSpan(
+                                                      text: string + " ",
+                                                    )
+                                                ],
+                                                text: "Selected gender : ",
+                                                style: GoogleFonts.roboto(
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                              textAlign: TextAlign.left,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                value: genderValue,
+                                choiceItems: genderChips,
+                                choiceType: S2ChoiceType.chips,
+                                modalType: S2ModalType.bottomSheet,
+                                choiceStyle: S2ChoiceStyle(
+                                  activeColor:
+                                      HexColor("#f55d5d").withOpacity(0.8),
+                                ),
+                                onChange: (state) =>
+                                    setState(() => genderValue = state.value),
+                              ),
                             ],
                           ),
                         ),
@@ -326,7 +477,8 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                             InkWell(
                               onTap: () {
                                 categoryValue = [];
-
+                                brandValue = [];
+                                genderValue = [];
                                 setModalState(() {});
                               },
                               child: Container(
@@ -353,22 +505,63 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                             ),
                             InkWell(
                               onTap: () {
+                                filteredList = [];
+                                List<ProductModel> tempList1 = [];
                                 if (categoryValue.isNotEmpty) {
-                                  setState(() {
-                                    filteredList = [];
-                                    categoryValue.forEach((category) {
-                                      productList.forEach((product) {
-                                        if (product.category == category) {
-                                          filteredList.add(product);
-                                        }
-                                      });
+                                  categoryValue.forEach((category) {
+                                    productList.forEach((product) {
+                                      if (product.category == category) {
+                                        tempList1.add(product);
+                                      }
                                     });
                                   });
                                 } else {
-                                  setState(() {
-                                    filteredList = productList;
-                                  });
+                                  tempList1 = productList;
                                 }
+                                List<ProductModel> tempList2 = [];
+                                if (brandValue.isNotEmpty) {
+                                  brandValue.forEach((brand) {
+                                    productList.forEach((product) {
+                                      if (product.brand == brand) {
+                                        tempList2.add(product);
+                                      }
+                                    });
+                                  });
+                                } else {
+                                  tempList2 = productList;
+                                }
+                                List<ProductModel> tempList3 = [];
+                                if (genderValue.isNotEmpty) {
+                                  genderValue.forEach((gender) {
+                                    productList.forEach((product) {
+                                      if (product.gender == gender) {
+                                        tempList3.add(product);
+                                      }
+                                    });
+                                  });
+                                } else {
+                                  tempList3 = productList;
+                                }
+                                List<List> temps = [
+                                  tempList1,
+                                  tempList2,
+                                  tempList3
+                                ];
+                                Map map = Map();
+                                for (List l in temps) {
+                                  l.forEach((item) => map[item] =
+                                      map.containsKey(item)
+                                          ? (map[item] + 1)
+                                          : 1);
+                                }
+
+                                var commonValues = map.keys
+                                    .where((key) => map[key] == temps.length);
+                                commonValues.forEach((product) {
+                                  filteredList.add(product);
+                                });
+                                setState(() {});
+
                                 Navigator.of(context).pop();
                               },
                               child: Container(
