@@ -7,9 +7,11 @@ import 'package:charlie_customer_app/Providers/ProductProvider.dart';
 import 'package:charlie_customer_app/Providers/UserProvider.dart';
 import 'package:charlie_customer_app/Screens/AllProductsScreen.dart';
 import 'package:charlie_customer_app/Screens/ProductDetailScreen.dart';
+import 'package:charlie_customer_app/Screens/SearchScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -28,20 +30,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   UserModel userInfo;
   bool _isLoading = false;
-  List<CategoryModel> categoryList = [];
+
   List<ProductModel> productList = [];
+  List<ProductModel> filteredList = [];
   final FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
+  void fetch() {
+    userInfo = Provider.of<UserProvider>(context, listen: false).userInfo;
+
+    productList = Provider.of<ProductProvider>(context, listen: false).products;
+    filteredList = productList;
+
+    filteredList.shuffle();
+  }
+
   @override
   void initState() {
-    userInfo = Provider.of<UserProvider>(context, listen: false).userInfo;
-    categoryList =
-        Provider.of<CategoryProvider>(context, listen: false).categoryList;
-    productList = Provider.of<ProductProvider>(context, listen: false).products;
-    if (productList != null) {
-      productList.shuffle();
-    }
+    fetch();
     super.initState();
   }
 
@@ -136,6 +142,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               child: TextFormField(
                                 focusNode: searchfocusNode,
                                 controller: searchController,
+                                onEditingComplete: () {
+                                  if (searchController.text != "")
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => SearchScreen(
+                                          searchedText: searchController.text,
+                                        ),
+                                      ),
+                                    );
+                                },
+                                textInputAction: TextInputAction.search,
+                                keyboardType: TextInputType.text,
                                 cursorColor:
                                     HexColor("#f55d5d").withOpacity(.8),
                                 decoration: InputDecoration(
@@ -174,87 +192,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          "Categories",
-                          style: GoogleFonts.montserrat(
-                            color: HexColor("#302a30").withOpacity(.9),
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          "See All",
-                          style: GoogleFonts.montserrat(
-                            color: HexColor("#f55d5d").withOpacity(.9),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: height * .01,
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(left: 20),
-                    height: height * 0.15,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) => Card(
-                        elevation: 0,
-                        child: Container(
-                          width: width * .3,
-                          child: Column(
-                            children: [
-                              Container(
-                                height: height * 0.1,
-                                width: width * .3,
-                                padding: EdgeInsets.all(10),
-                                child: CachedNetworkImage(
-                                  imageUrl: "${categoryList[index].imageUrl}",
-                                  placeholder: (context, url) => SpinKitRing(
-                                    color: Colors.grey,
-                                    lineWidth: 3,
-                                  ),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              SizedBox(
-                                height: height * .01,
-                              ),
-                              Container(
-                                width: width * .3,
-                                padding: EdgeInsets.symmetric(horizontal: 8),
-                                child: Center(
-                                  child: Text(
-                                    "${categoryList[index].name}",
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.montserrat(
-                                      color:
-                                          HexColor("#302a30").withOpacity(.9),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      itemCount: categoryList.length,
-                    ),
-                  ),
-                  SizedBox(
-                    height: height * .02,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
                           "Popular Items",
                           style: GoogleFonts.montserrat(
                             color: HexColor("#302a30").withOpacity(.9),
@@ -285,205 +222,226 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   SizedBox(
                     height: height * .01,
                   ),
-                  if (productList != null)
-                    Container(
-                      padding: EdgeInsets.only(left: 20, right: 20),
-                      height: height * 1.3,
-                      child: GridView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 4 / 5,
-                          crossAxisSpacing: 2,
-                          mainAxisSpacing: 5,
-                        ),
-                        itemBuilder: (context, index) => InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => ProductDetailScreen(
-                                  product: productList[index],
-                                ),
-                              ),
-                            );
-                          },
-                          child: Card(
-                            child: Container(
-                              child: Column(
-                                children: [
-                                  Stack(
+                  filteredList == null
+                      ? Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 20,
+                          ),
+                          child: Text(
+                            "No Popular Item here! Tap \"See All\" to explore more!",
+                            style: GoogleFonts.montserrat(
+                              color: HexColor("#302a30"),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        )
+                      : Container(
+                          padding: EdgeInsets.only(left: 20, right: 20),
+                          height: height * .28 * (filteredList.length / 2),
+                          child: GridView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 4 / 5,
+                              crossAxisSpacing: 2,
+                              mainAxisSpacing: 5,
+                            ),
+                            itemBuilder: (context, index) => InkWell(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => ProductDetailScreen(
+                                      product: filteredList[index],
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Card(
+                                child: Container(
+                                  child: Column(
                                     children: [
-                                      Container(
-                                        height: height * 0.15,
-                                        width: width,
-                                        child: CachedNetworkImage(
-                                          imageUrl:
-                                              "${productList[index].imageUrl[0]}",
-                                          placeholder: (context, url) =>
-                                              SpinKitRing(
-                                            color: Colors.grey,
-                                            lineWidth: 3,
-                                          ),
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      Positioned(
-                                        right: 10,
-                                        bottom: 10,
-                                        child: InkWell(
-                                          onTap: () {
-                                            final User user = auth.currentUser;
-                                            final uid = user.uid;
-                                            setState(() {
-                                              productList[index].isFav =
-                                                  !productList[index].isFav;
-                                            });
-                                            if (productList[index].isFav) {
-                                              CollectionReference quotes =
-                                                  firestore
-                                                      .collection("products");
-                                              quotes
-                                                  .doc(productList[index].id)
-                                                  .update({
-                                                "favorites": {
-                                                  uid: true,
-                                                }
-                                              });
-                                            } else {
-                                              CollectionReference quotes =
-                                                  firestore
-                                                      .collection("products");
-                                              quotes
-                                                  .doc(productList[index].id)
-                                                  .update({
-                                                "favorites": {
-                                                  uid: false,
-                                                }
-                                              });
-                                            }
-                                          },
-                                          child: CircleAvatar(
-                                            backgroundColor: Colors.white,
-                                            radius: 16,
-                                            child: Icon(
-                                              productList[index].isFav
-                                                  ? MdiIcons.heart
-                                                  : MdiIcons.heartOutline,
-                                              color: HexColor("#f55d5d"),
-                                              size: 18,
+                                      Stack(
+                                        children: [
+                                          Container(
+                                            height: height * 0.15,
+                                            width: width,
+                                            child: CachedNetworkImage(
+                                              imageUrl:
+                                                  "${filteredList[index].imageUrl[0]}",
+                                              placeholder: (context, url) =>
+                                                  SpinKitRing(
+                                                color: Colors.grey,
+                                                lineWidth: 3,
+                                              ),
+                                              fit: BoxFit.cover,
                                             ),
                                           ),
+                                          Positioned(
+                                            right: 10,
+                                            bottom: 10,
+                                            child: InkWell(
+                                              onTap: () {
+                                                final User user =
+                                                    auth.currentUser;
+                                                final uid = user.uid;
+                                                setState(() {
+                                                  filteredList[index].isFav =
+                                                      !filteredList[index]
+                                                          .isFav;
+                                                });
+                                                if (filteredList[index].isFav) {
+                                                  CollectionReference quotes =
+                                                      firestore.collection(
+                                                          "products");
+                                                  quotes
+                                                      .doc(filteredList[index]
+                                                          .id)
+                                                      .update({
+                                                    "favorites": {
+                                                      uid: true,
+                                                    }
+                                                  });
+                                                } else {
+                                                  CollectionReference quotes =
+                                                      firestore.collection(
+                                                          "products");
+                                                  quotes
+                                                      .doc(filteredList[index]
+                                                          .id)
+                                                      .update({
+                                                    "favorites": {
+                                                      uid: false,
+                                                    }
+                                                  });
+                                                }
+                                              },
+                                              child: CircleAvatar(
+                                                backgroundColor: Colors.white,
+                                                radius: 16,
+                                                child: Icon(
+                                                  filteredList[index].isFav
+                                                      ? MdiIcons.heart
+                                                      : MdiIcons.heartOutline,
+                                                  color: HexColor("#f55d5d"),
+                                                  size: 18,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: height * .01,
+                                      ),
+                                      Container(
+                                        width: width,
+                                        padding:
+                                            EdgeInsets.symmetric(horizontal: 8),
+                                        child: Text(
+                                          "${filteredList[index].name}",
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.montserrat(
+                                            color: HexColor("#302a30")
+                                                .withOpacity(.9),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: height * .01,
-                                  ),
-                                  Container(
-                                    width: width,
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8),
-                                    child: Text(
-                                      "${productList[index].name}",
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.montserrat(
-                                        color:
-                                            HexColor("#302a30").withOpacity(.9),
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
+                                      Container(
+                                        width: width,
+                                        padding:
+                                            EdgeInsets.symmetric(horizontal: 8),
+                                        child: Text(
+                                          "${filteredList[index].gender}/${filteredList[index].category}",
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.montserrat(
+                                            color: Colors.grey,
+                                            fontSize: 10,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                  Container(
-                                    width: width,
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8),
-                                    child: Text(
-                                      "${productList[index].gender}/${productList[index].category}",
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.montserrat(
-                                        color: Colors.grey,
-                                        fontSize: 10,
+                                      SizedBox(
+                                        height: height * .01,
                                       ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: height * .01,
-                                  ),
-                                  productList[index].variantList == null
-                                      ? Container()
-                                      : Container(
-                                          width: width,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 2),
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                MdiIcons.currencyInr,
-                                                size: 18,
-                                              ),
-                                              Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
+                                      filteredList[index].variantList == null
+                                          ? Container()
+                                          : Container(
+                                              width: width,
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 2),
+                                              child: Row(
                                                 children: [
-                                                  Text(
-                                                    "${productList[index].variantList[0].sellingPrice}",
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style:
-                                                        GoogleFonts.montserrat(
-                                                      color:
-                                                          HexColor("#302a30"),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
+                                                  Icon(
+                                                    MdiIcons.currencyInr,
+                                                    size: 18,
                                                   ),
-                                                  SizedBox(
-                                                    width: width * .01,
-                                                  ),
-                                                  Text(
-                                                    "${productList[index].variantList[0].costPrice}",
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style:
-                                                        GoogleFonts.montserrat(
-                                                      color: Colors.grey,
-                                                      fontSize: 12,
-                                                      decoration: TextDecoration
-                                                          .lineThrough,
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: width * .01,
-                                                  ),
-                                                  Text(
-                                                    "${(((double.parse(productList[index].variantList[0].costPrice) - double.parse(productList[index].variantList[0].sellingPrice)) / double.parse(productList[index].variantList[0].costPrice)) * 100).toStringAsFixed(0)}" +
-                                                        "% off",
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style:
-                                                        GoogleFonts.montserrat(
-                                                      color: Colors.green,
-                                                      fontSize: 10,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text(
+                                                        "${filteredList[index].variantList[0].sellingPrice}",
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: GoogleFonts
+                                                            .montserrat(
+                                                          color: HexColor(
+                                                              "#302a30"),
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        width: width * .01,
+                                                      ),
+                                                      Text(
+                                                        "${filteredList[index].variantList[0].costPrice}",
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: GoogleFonts
+                                                            .montserrat(
+                                                          color: Colors.grey,
+                                                          fontSize: 12,
+                                                          decoration:
+                                                              TextDecoration
+                                                                  .lineThrough,
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        width: width * .01,
+                                                      ),
+                                                      Text(
+                                                        "${(((double.parse(filteredList[index].variantList[0].costPrice) - double.parse(filteredList[index].variantList[0].sellingPrice)) / double.parse(filteredList[index].variantList[0].costPrice)) * 100).toStringAsFixed(0)}" +
+                                                            "% off",
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: GoogleFonts
+                                                            .montserrat(
+                                                          color: Colors.green,
+                                                          fontSize: 10,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ],
                                               ),
-                                            ],
-                                          ),
-                                        ),
-                                ],
+                                            ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
+                            itemCount: filteredList.length,
                           ),
                         ),
-                        itemCount: productList.length,
-                      ),
-                    ),
                 ],
               ),
             ),

@@ -9,6 +9,7 @@ import 'package:charlie_customer_app/Providers/CategoryProvider.dart';
 import 'package:charlie_customer_app/Providers/GenderProvider.dart';
 import 'package:charlie_customer_app/Providers/ProductProvider.dart';
 import 'package:charlie_customer_app/Providers/UserProvider.dart';
+import 'package:charlie_customer_app/Screens/CategoriesScreen.dart';
 import 'package:charlie_customer_app/Screens/DashboardScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -225,98 +226,51 @@ class _HomeScreenState extends State<HomeScreen>
     tabController.dispose();
   }
 
+  var index = 0;
+
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: HexColor("#F7EBF0"),
-      bottomNavigationBar: Material(
-        color: Colors.white,
-        child: TabBar(
-          indicatorColor: Colors.transparent,
-          dragStartBehavior: DragStartBehavior.start,
-          labelColor: HexColor('#f55d5d').withOpacity(.8),
-          unselectedLabelColor: Colors.grey,
-          controller: tabController,
-          tabs: <Widget>[
-            Container(
-              height: height * .08,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    FeatherIcons.home,
-                    size: 18,
-                  ),
-                  SizedBox(
-                    height: height * .005,
-                  ),
-                  Text(
-                    'Home',
-                    style: GoogleFonts.roboto(fontSize: 12),
-                  ),
-                ],
-              ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
+        currentIndex: index,
+        selectedItemColor: HexColor("#f55d5d").withOpacity(.8),
+        unselectedItemColor: Colors.grey,
+        onTap: (i) {
+          index = i;
+          setState(() {});
+        },
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(
+              FeatherIcons.home,
+              size: 18,
             ),
-            Container(
-              height: height * .08,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    FeatherIcons.grid,
-                    size: 18,
-                  ),
-                  SizedBox(
-                    height: height * .005,
-                  ),
-                  Text(
-                    'Categories',
-                    style: GoogleFonts.roboto(fontSize: 12),
-                  ),
-                ],
-              ),
+            label: "Home",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              FeatherIcons.grid,
+              size: 18,
             ),
-            Container(
-              height: height * .08,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    FeatherIcons.heart,
-                    size: 18,
-                  ),
-                  SizedBox(
-                    height: height * .005,
-                  ),
-                  Text(
-                    'Favorites',
-                    style: GoogleFonts.roboto(fontSize: 12),
-                  ),
-                ],
-              ),
+            label: "Categories",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              FeatherIcons.heart,
+              size: 18,
             ),
-            Container(
-              height: height * .08,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    FeatherIcons.user,
-                    size: 18,
-                  ),
-                  SizedBox(
-                    height: height * .005,
-                  ),
-                  Text(
-                    'Profile',
-                    style: GoogleFonts.roboto(fontSize: 12),
-                  ),
-                ],
-              ),
+            label: "Favorites",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              FeatherIcons.user,
+              size: 18,
             ),
-          ],
-        ),
+            label: "Profile",
+          ),
+        ],
       ),
       body: _isLoading
           ? Center(
@@ -326,16 +280,11 @@ class _HomeScreenState extends State<HomeScreen>
                 color: HexColor("#f55d5d"),
               ),
             )
-          : TabBarView(
-              physics: NeverScrollableScrollPhysics(),
-              children: <Widget>[
-                DashboardScreen(),
-                Container(),
-                Container(),
-                Container(),
-              ],
-              controller: tabController,
-            ),
+          : index == 0
+              ? DashboardScreen()
+              : index == 1
+                  ? CategoriesScreen()
+                  : Container(),
     );
   }
 }
