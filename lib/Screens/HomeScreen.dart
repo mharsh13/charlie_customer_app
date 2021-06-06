@@ -193,7 +193,10 @@ class _HomeScreenState extends State<HomeScreen>
               }
             });
           });
-          setState(() {});
+          setState(() {
+            Provider.of<ProductProvider>(context, listen: false)
+                .setProductList(productList);
+          });
         });
       });
       setState(() {
