@@ -222,7 +222,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   SizedBox(
                     height: height * .01,
                   ),
-                  filteredList == null
+                  filteredList.isEmpty
                       ? Container(
                           padding: EdgeInsets.symmetric(
                             horizontal: 20,

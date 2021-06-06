@@ -29,7 +29,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
-  TabController tabController;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   UserModel userInfo;
@@ -138,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen>
     });
   }
 
-  fetchProductInfo() async {
+  Future<void> fetchProductInfo() async {
     setState(() {
       _isLoading = true;
     });
@@ -195,13 +194,11 @@ class _HomeScreenState extends State<HomeScreen>
               }
             });
           });
-          setState(() {
-            Provider.of<ProductProvider>(context, listen: false)
-                .setProductList(productList);
-          });
+          setState(() {});
         });
       });
       setState(() {
+        print(productList);
         Provider.of<ProductProvider>(context, listen: false)
             .setProductList(productList);
         _isLoading = false;
@@ -212,10 +209,10 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
-    tabController = new TabController(length: 4, vsync: this, initialIndex: 0);
+
+    fetchProductInfo();
     fetchCategory();
     fetchUserInfo();
-    fetchProductInfo();
     fetchBrand();
     fetchGender();
   }
@@ -224,7 +221,6 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void dispose() {
     super.dispose();
-    tabController.dispose();
   }
 
   var index = 0;
