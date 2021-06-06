@@ -370,21 +370,21 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               widget.product.isFav = !widget.product.isFav;
                             });
                             if (widget.product.isFav) {
-                              CollectionReference quotes =
-                                  firestore.collection("products");
-                              quotes.doc(widget.product.id).update({
-                                "favorites": {
-                                  uid: true,
-                                }
-                              });
+                              // CollectionReference quotes =
+                              //     firestore.collection("products");
+                              // quotes.doc(widget.product.id).update({
+                              //   "favorites": {
+                              //     uid: true,
+                              //   }
+                              // });
                             } else {
-                              CollectionReference quotes =
-                                  firestore.collection("products");
-                              quotes.doc(widget.product.id).update({
-                                "favorites": {
-                                  uid: false,
-                                }
-                              });
+                              // CollectionReference quotes =
+                              //     firestore.collection("products");
+                              // quotes.doc(widget.product.id).update({
+                              //   "favorites": {
+                              //     uid: false,
+                              //   }
+                              // });
                             }
                           },
                         ),

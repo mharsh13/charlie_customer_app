@@ -8,6 +8,7 @@ import 'package:charlie_customer_app/Providers/UserProvider.dart';
 import 'package:charlie_customer_app/Screens/AllProductsScreen.dart';
 import 'package:charlie_customer_app/Screens/ProductDetailScreen.dart';
 import 'package:charlie_customer_app/Screens/SearchScreen.dart';
+import 'package:charlie_customer_app/Widgets/ProductGrid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -45,17 +46,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
     filteredList.shuffle();
   }
 
-  // @override
-  // void initState() {
-  //   fetch();
-  //   super.initState();
-  // }
+  @override
+  void initState() {
+    fetch();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-    fetch();
+
     return Scaffold(
       backgroundColor: HexColor("#F7EBF0"),
       appBar: AppBar(
@@ -240,206 +241,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       : Container(
                           padding: EdgeInsets.only(left: 20, right: 20),
                           height: height * .28 * (filteredList.length / 2),
-                          child: GridView.builder(
-                            physics: NeverScrollableScrollPhysics(),
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio: 4 / 5,
-                              crossAxisSpacing: 2,
-                              mainAxisSpacing: 5,
-                            ),
-                            itemBuilder: (context, index) => InkWell(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => ProductDetailScreen(
-                                      product: filteredList[index],
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Card(
-                                child: Container(
-                                  child: Column(
-                                    children: [
-                                      Stack(
-                                        children: [
-                                          Container(
-                                            height: height * 0.15,
-                                            width: width,
-                                            child: CachedNetworkImage(
-                                              imageUrl:
-                                                  "${filteredList[index].imageUrl[0]}",
-                                              placeholder: (context, url) =>
-                                                  SpinKitRing(
-                                                color: Colors.grey,
-                                                lineWidth: 3,
-                                              ),
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                          Positioned(
-                                            right: 10,
-                                            bottom: 10,
-                                            child: InkWell(
-                                              onTap: () {
-                                                final User user =
-                                                    auth.currentUser;
-                                                final uid = user.uid;
-                                                setState(() {
-                                                  filteredList[index].isFav =
-                                                      !filteredList[index]
-                                                          .isFav;
-                                                });
-                                                if (filteredList[index].isFav) {
-                                                  CollectionReference quotes =
-                                                      firestore.collection(
-                                                          "products");
-                                                  quotes
-                                                      .doc(filteredList[index]
-                                                          .id)
-                                                      .update({
-                                                    "favorites": {
-                                                      uid: true,
-                                                    }
-                                                  });
-                                                } else {
-                                                  CollectionReference quotes =
-                                                      firestore.collection(
-                                                          "products");
-                                                  quotes
-                                                      .doc(filteredList[index]
-                                                          .id)
-                                                      .update({
-                                                    "favorites": {
-                                                      uid: false,
-                                                    }
-                                                  });
-                                                }
-                                              },
-                                              child: CircleAvatar(
-                                                backgroundColor: Colors.white,
-                                                radius: 16,
-                                                child: Icon(
-                                                  filteredList[index].isFav
-                                                      ? MdiIcons.heart
-                                                      : MdiIcons.heartOutline,
-                                                  color: HexColor("#f55d5d"),
-                                                  size: 18,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: height * .01,
-                                      ),
-                                      Container(
-                                        width: width,
-                                        padding:
-                                            EdgeInsets.symmetric(horizontal: 8),
-                                        child: Text(
-                                          "${filteredList[index].name}",
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.montserrat(
-                                            color: HexColor("#302a30")
-                                                .withOpacity(.9),
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        width: width,
-                                        padding:
-                                            EdgeInsets.symmetric(horizontal: 8),
-                                        child: Text(
-                                          "${filteredList[index].gender}/${filteredList[index].category}",
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.montserrat(
-                                            color: Colors.grey,
-                                            fontSize: 10,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: height * .01,
-                                      ),
-                                      filteredList[index].variantList == null
-                                          ? Container()
-                                          : Container(
-                                              width: width,
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 2),
-                                              child: Row(
-                                                children: [
-                                                  Icon(
-                                                    MdiIcons.currencyInr,
-                                                    size: 18,
-                                                  ),
-                                                  Row(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Text(
-                                                        "${filteredList[index].variantList[0].sellingPrice}",
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: GoogleFonts
-                                                            .montserrat(
-                                                          color: HexColor(
-                                                              "#302a30"),
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        width: width * .01,
-                                                      ),
-                                                      Text(
-                                                        "${filteredList[index].variantList[0].costPrice}",
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: GoogleFonts
-                                                            .montserrat(
-                                                          color: Colors.grey,
-                                                          fontSize: 12,
-                                                          decoration:
-                                                              TextDecoration
-                                                                  .lineThrough,
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        width: width * .01,
-                                                      ),
-                                                      Text(
-                                                        "${(((double.parse(filteredList[index].variantList[0].costPrice) - double.parse(filteredList[index].variantList[0].sellingPrice)) / double.parse(filteredList[index].variantList[0].costPrice)) * 100).toStringAsFixed(0)}" +
-                                                            "% off",
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: GoogleFonts
-                                                            .montserrat(
-                                                          color: Colors.green,
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            itemCount: filteredList.length,
+                          child: ProductGrid(
+                            filteredList: filteredList,
+                            height: height,
+                            width: width,
+                            auth: auth,
                           ),
                         ),
                 ],
