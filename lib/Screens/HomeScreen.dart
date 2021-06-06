@@ -11,6 +11,7 @@ import 'package:charlie_customer_app/Providers/ProductProvider.dart';
 import 'package:charlie_customer_app/Providers/UserProvider.dart';
 import 'package:charlie_customer_app/Screens/CategoriesScreen.dart';
 import 'package:charlie_customer_app/Screens/DashboardScreen.dart';
+import 'package:charlie_customer_app/Screens/FavoritesScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
@@ -284,7 +285,9 @@ class _HomeScreenState extends State<HomeScreen>
               ? DashboardScreen()
               : index == 1
                   ? CategoriesScreen()
-                  : Container(),
+                  : index == 2
+                      ? FavoritesScreen()
+                      : Container(),
     );
   }
 }
