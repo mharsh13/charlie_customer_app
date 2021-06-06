@@ -12,6 +12,7 @@ import 'package:charlie_customer_app/Providers/UserProvider.dart';
 import 'package:charlie_customer_app/Screens/CategoriesScreen.dart';
 import 'package:charlie_customer_app/Screens/DashboardScreen.dart';
 import 'package:charlie_customer_app/Screens/FavoritesScreen.dart';
+import 'package:charlie_customer_app/Screens/ProfileScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
@@ -149,7 +150,8 @@ class _HomeScreenState extends State<HomeScreen>
         var imageUrls = prodObject["product"]["ImageUrl"];
         List<String> images = [...imageUrls.map((el) => el.toString())];
         bool isFavorite = false;
-        if (prodObject.containsKey("favorites")) {
+        if (prodObject.containsKey("favorites") &&
+            prodObject.containsKey(_firebaseAuth.currentUser.uid)) {
           isFavorite = prodObject["favorites"][_firebaseAuth.currentUser.uid];
         }
 
@@ -283,7 +285,7 @@ class _HomeScreenState extends State<HomeScreen>
                   ? CategoriesScreen()
                   : index == 2
                       ? FavoritesScreen()
-                      : Container(),
+                      : ProfileScreen(),
     );
   }
 }

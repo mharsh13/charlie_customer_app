@@ -45,17 +45,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
     filteredList.shuffle();
   }
 
-  @override
-  void initState() {
-    fetch();
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   fetch();
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-
+    fetch();
     return Scaffold(
       backgroundColor: HexColor("#F7EBF0"),
       appBar: AppBar(

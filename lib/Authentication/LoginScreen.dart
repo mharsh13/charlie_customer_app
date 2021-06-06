@@ -99,9 +99,20 @@ class _LoginScreenState extends State<LoginScreen>
                                           return null;
                                       },
                                       controller: phoneLogin,
-                                      cursorColor: Colors.pink[100],
+                                      cursorColor:
+                                          HexColor('#f55d5d').withOpacity(.3),
                                       keyboardType: TextInputType.phone,
                                       decoration: InputDecoration(
+                                        fillColor: Colors.white,
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.never,
+                                        focusedBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: HexColor('#f55d5d')
+                                                .withOpacity(.6),
+                                            width: 2.0,
+                                          ),
+                                        ),
                                         enabledBorder: UnderlineInputBorder(
                                           borderSide: BorderSide(
                                             color: Colors.pink[100],
@@ -268,15 +279,25 @@ class _LoginScreenState extends State<LoginScreen>
                                               return null;
                                           },
                                           controller: username,
-                                          cursorColor: Colors.pink[100],
+                                          cursorColor: HexColor('#f55d5d')
+                                              .withOpacity(.6),
                                           keyboardType: TextInputType.name,
                                           decoration: InputDecoration(
+                                            floatingLabelBehavior:
+                                                FloatingLabelBehavior.never,
+                                            focusedBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: HexColor('#f55d5d')
+                                                    .withOpacity(.6),
+                                                width: 2.0,
+                                              ),
+                                            ),
                                             enabledBorder: UnderlineInputBorder(
                                               borderSide: BorderSide(
                                                 color: Colors.pink[100],
                                               ),
                                             ),
-                                            labelText: 'Enter Name',
+                                            hintText: 'Enter Name',
                                           ),
                                         ),
                                         TextFormField(
@@ -289,9 +310,19 @@ class _LoginScreenState extends State<LoginScreen>
                                               return null;
                                           },
                                           controller: phoneSignUp,
-                                          cursorColor: Colors.pink[100],
+                                          cursorColor: HexColor('#f55d5d')
+                                              .withOpacity(.6),
                                           keyboardType: TextInputType.phone,
                                           decoration: InputDecoration(
+                                            floatingLabelBehavior:
+                                                FloatingLabelBehavior.never,
+                                            focusedBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: HexColor('#f55d5d')
+                                                    .withOpacity(.6),
+                                                width: 2.0,
+                                              ),
+                                            ),
                                             enabledBorder: UnderlineInputBorder(
                                               borderSide: BorderSide(
                                                 color: Colors.pink[100],
