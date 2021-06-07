@@ -363,28 +363,28 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 ? HexColor("#f55d5d")
                                 : Colors.black,
                           ),
-                          onPressed: () {
+                          onPressed: () async {
                             final User user = auth.currentUser;
                             final uid = user.uid;
                             setState(() {
                               widget.product.isFav = !widget.product.isFav;
                             });
                             if (widget.product.isFav) {
-                              // CollectionReference quotes =
-                              //     firestore.collection("products");
-                              // quotes.doc(widget.product.id).update({
-                              //   "favorites": {
-                              //     uid: true,
-                              //   }
-                              // });
+                              CollectionReference userInfo =
+                                  firestore.collection("User Information");
+                              await userInfo.doc(uid).update({
+                                "favorites": FieldValue.arrayUnion(
+                                  [widget.product.id],
+                                )
+                              });
                             } else {
-                              // CollectionReference quotes =
-                              //     firestore.collection("products");
-                              // quotes.doc(widget.product.id).update({
-                              //   "favorites": {
-                              //     uid: false,
-                              //   }
-                              // });
+                              CollectionReference userInfo =
+                                  firestore.collection("User Information");
+                              await userInfo.doc(uid).update({
+                                "favorites": FieldValue.arrayRemove(
+                                  [widget.product.id],
+                                )
+                              });
                             }
                           },
                         ),

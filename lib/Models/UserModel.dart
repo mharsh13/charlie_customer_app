@@ -2,5 +2,6 @@ class UserModel {
   String username;
   String phoneNumber;
   String id;
-  UserModel({this.id, this.phoneNumber, this.username});
+  List<String> userFavList;
+  UserModel({this.id, this.phoneNumber, this.username, this.userFavList});
 }

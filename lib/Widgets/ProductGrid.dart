@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charlie_customer_app/Models/ProductModel.dart';
 import 'package:charlie_customer_app/Screens/ProductDetailScreen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -27,6 +28,7 @@ class ProductGrid extends StatefulWidget {
 }
 
 class _ProductGridState extends State<ProductGrid> {
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
@@ -69,7 +71,7 @@ class _ProductGridState extends State<ProductGrid> {
                       right: 10,
                       bottom: 10,
                       child: InkWell(
-                        onTap: () {
+                        onTap: () async {
                           final User user = widget.auth.currentUser;
                           final uid = user.uid;
                           setState(() {
@@ -77,29 +79,21 @@ class _ProductGridState extends State<ProductGrid> {
                                 !widget.filteredList[index].isFav;
                           });
                           if (widget.filteredList[index].isFav) {
-                            // CollectionReference quotes =
-                            //     firestore.collection(
-                            //         "products");
-                            // quotes
-                            //     .doc(filteredList[index]
-                            //         .id)
-                            //     .update({
-                            //   "favorites": {
-                            //     uid: true,
-                            //   }
-                            // });
+                            CollectionReference userInfo =
+                                firestore.collection("User Information");
+                            await userInfo.doc(uid).update({
+                              "favorites": FieldValue.arrayUnion(
+                                [widget.filteredList[index].id],
+                              )
+                            });
                           } else {
-                            // CollectionReference quotes =
-                            //     firestore.collection(
-                            //         "products");
-                            // quotes
-                            //     .doc(filteredList[index]
-                            //         .id)
-                            //     .update({
-                            //   "favorites": {
-                            //     uid: false,
-                            //   }
-                            // });
+                            CollectionReference userInfo =
+                                firestore.collection("User Information");
+                            await userInfo.doc(uid).update({
+                              "favorites": FieldValue.arrayRemove(
+                                [widget.filteredList[index].id],
+                              )
+                            });
                           }
                         },
                         child: CircleAvatar(

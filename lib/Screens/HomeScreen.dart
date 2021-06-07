@@ -15,11 +15,9 @@ import 'package:charlie_customer_app/Screens/FavoritesScreen.dart';
 import 'package:charlie_customer_app/Screens/ProfileScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 
@@ -49,10 +47,16 @@ class _HomeScreenState extends State<HomeScreen>
       event.docs.forEach((doc) {
         Map object = doc.data();
         if (doc.id == _firebaseAuth.currentUser.uid) {
+          List<String> userFavs = [];
+          if (object.containsKey("favorites")) {
+            var fetched = object["favorites"];
+            userFavs = [...fetched.map((el) => el.toString())];
+          }
           userInfo = UserModel(
             id: doc.id,
             phoneNumber: object["phoneNumber"],
             username: object["username"],
+            userFavList: userFavs,
           );
         }
       });
@@ -150,10 +154,12 @@ class _HomeScreenState extends State<HomeScreen>
         var imageUrls = prodObject["product"]["ImageUrl"];
         List<String> images = [...imageUrls.map((el) => el.toString())];
         bool isFavorite = false;
-        if (prodObject.containsKey("favorites") &&
-            prodObject.containsKey(_firebaseAuth.currentUser.uid)) {
-          isFavorite = prodObject["favorites"][_firebaseAuth.currentUser.uid];
-        }
+        if (userInfo.userFavList.isNotEmpty)
+          userInfo.userFavList.forEach((favId) {
+            if (product.id == favId) {
+              isFavorite = true;
+            }
+          });
 
         productList.add(
           ProductModel(
@@ -212,11 +218,11 @@ class _HomeScreenState extends State<HomeScreen>
   void initState() {
     super.initState();
 
-    fetchProductInfo();
-    fetchCategory();
     fetchUserInfo();
+    fetchCategory();
     fetchBrand();
     fetchGender();
+    fetchProductInfo();
   }
 
 //dispose method for good practice.
