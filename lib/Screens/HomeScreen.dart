@@ -1,4 +1,5 @@
 import 'package:charlie_customer_app/Models/BrandModel.dart';
+import 'package:charlie_customer_app/Models/CartModel.dart';
 import 'package:charlie_customer_app/Models/CategoryModel.dart';
 import 'package:charlie_customer_app/Models/GenderModel.dart';
 import 'package:charlie_customer_app/Models/ProductModel.dart';
@@ -48,6 +49,18 @@ class _HomeScreenState extends State<HomeScreen>
         Map object = doc.data();
         if (doc.id == _firebaseAuth.currentUser.uid) {
           List<String> userFavs = [];
+          List<CartModel> cartItems = [];
+          if (object.containsKey("Cart Items")) {
+            var list = object["Cart Items"];
+            list.forEach((e) {
+              cartItems.add(
+                CartModel(
+                  productId: e["ProductId"],
+                  variantId: e["VariantId"],
+                ),
+              );
+            });
+          }
           if (object.containsKey("favorites")) {
             var fetched = object["favorites"];
             userFavs = [...fetched.map((el) => el.toString())];
@@ -57,6 +70,7 @@ class _HomeScreenState extends State<HomeScreen>
             phoneNumber: object["phoneNumber"],
             username: object["username"],
             userFavList: userFavs,
+            cartList: cartItems,
           );
         }
       });

@@ -6,6 +6,7 @@ import 'package:charlie_customer_app/Providers/CategoryProvider.dart';
 import 'package:charlie_customer_app/Providers/ProductProvider.dart';
 import 'package:charlie_customer_app/Providers/UserProvider.dart';
 import 'package:charlie_customer_app/Screens/AllProductsScreen.dart';
+import 'package:charlie_customer_app/Screens/CartScreen.dart';
 import 'package:charlie_customer_app/Screens/ProductDetailScreen.dart';
 import 'package:charlie_customer_app/Screens/SearchScreen.dart';
 import 'package:charlie_customer_app/Widgets/ProductGrid.dart';
@@ -47,16 +48,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   @override
-  void initState() {
-    fetch();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-
+    fetch();
     return Scaffold(
       backgroundColor: HexColor("#F7EBF0"),
       appBar: AppBar(
@@ -72,7 +67,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
         actions: [
           IconButton(
             icon: Icon(FeatherIcons.shoppingCart),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => CartScreen(),
+                ),
+              );
+            },
           )
         ],
       ),

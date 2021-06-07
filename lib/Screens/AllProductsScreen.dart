@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charlie_customer_app/Models/BrandModel.dart';
 import 'package:charlie_customer_app/Models/CategoryModel.dart';
 import 'package:charlie_customer_app/Models/GenderModel.dart';
@@ -12,15 +11,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_select/smart_select.dart';
-
-import 'ProductDetailScreen.dart';
 
 class AllProductsScreen extends StatefulWidget {
   @override

@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:charlie_customer_app/Models/CartModel.dart';
 import 'package:charlie_customer_app/Models/ProductModel.dart';
 import 'package:charlie_customer_app/Models/VariantModel.dart';
 
@@ -29,6 +30,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   var selectedQuantity = 1;
   final FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  bool _isLoading = false;
 
   _buildCircleIndicator5() {
     return Padding(
@@ -93,6 +96,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.white,
       bottomNavigationBar: Card(
         color: Colors.white,
@@ -107,7 +111,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 height: height * 0.02,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Row(
                     children: [
@@ -246,7 +250,54 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ),
               Center(
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () async {
+                    setState(() {
+                      _isLoading = true;
+                    });
+                    CartModel cartItem;
+                    widget.product.variantList.forEach((variant) {
+                      if (variant.colorCode == selectedVariantModel.colorCode &&
+                          variant.size == selectedVariantModel.size) {
+                        cartItem = CartModel(
+                          productId: widget.product.id,
+                          variantId: variant.id,
+                        );
+                      }
+                    });
+                    final User user = auth.currentUser;
+                    final uid = user.uid;
+                    Map<String, Object> mapItems;
+                    mapItems = {
+                      "ProductId": cartItem.productId,
+                      "VariantId": cartItem.variantId,
+                    };
+                    CollectionReference userInfo =
+                        firestore.collection("User Information");
+                    await userInfo.doc(uid).update({
+                      "Cart Items": FieldValue.arrayUnion(
+                        [mapItems],
+                      )
+                    }).then(
+                      (value) {
+                        setState(() {
+                          _isLoading = false;
+                        });
+                        final snackBar = SnackBar(
+                          duration: Duration(seconds: 2),
+                          content: Text('Item added to cart'),
+                          backgroundColor: HexColor("#f55d5d").withOpacity(0.8),
+                          action: SnackBarAction(
+                            label: 'Ok',
+                            textColor: Colors.white,
+                            onPressed: () {},
+                          ),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          snackBar,
+                        );
+                      },
+                    );
+                  },
                   child: Container(
                     width: width * 0.6,
                     padding: EdgeInsets.all(6),
@@ -255,26 +306,31 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Add to cart",
-                            style: GoogleFonts.poppins(
+                      child: _isLoading
+                          ? SpinKitThreeBounce(
                               color: Colors.white,
-                              fontSize: 16,
+                              size: 24,
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Add to cart",
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: width * 0.02,
+                                ),
+                                Icon(
+                                  FeatherIcons.shoppingCart,
+                                  color: Colors.white,
+                                  size: 20,
+                                )
+                              ],
                             ),
-                          ),
-                          SizedBox(
-                            width: width * 0.02,
-                          ),
-                          Icon(
-                            FeatherIcons.shoppingCart,
-                            color: Colors.white,
-                            size: 20,
-                          )
-                        ],
-                      ),
                     ),
                   ),
                 ),
