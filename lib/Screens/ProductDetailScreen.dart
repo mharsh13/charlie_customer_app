@@ -111,7 +111,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 height: height * 0.02,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
@@ -261,6 +261,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         cartItem = CartModel(
                           productId: widget.product.id,
                           variantId: variant.id,
+                          quantity: selectedQuantity.toString(),
                         );
                       }
                     });
@@ -270,6 +271,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     mapItems = {
                       "ProductId": cartItem.productId,
                       "VariantId": cartItem.variantId,
+                      "Quantity": cartItem.quantity,
                     };
                     CollectionReference userInfo =
                         firestore.collection("User Information");

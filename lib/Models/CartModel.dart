@@ -1,5 +1,6 @@
 class CartModel {
   String variantId;
   String productId;
-  CartModel({this.productId, this.variantId});
+  String quantity;
+  CartModel({this.productId, this.variantId, this.quantity});
 }

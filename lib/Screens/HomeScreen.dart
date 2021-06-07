@@ -57,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen>
                 CartModel(
                   productId: e["ProductId"],
                   variantId: e["VariantId"],
+                  quantity: e["Quantity"],
                 ),
               );
             });

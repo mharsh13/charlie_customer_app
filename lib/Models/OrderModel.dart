@@ -9,13 +9,16 @@ class OrderModel {
   String category;
   String imageUrl;
   VariantModel variant;
-  OrderModel(
-      {this.brand,
-      this.category,
-      this.desc,
-      this.gender,
-      this.productId,
-      this.productName,
-      this.variant,
-      this.imageUrl});
+  String quantity;
+  OrderModel({
+    this.brand,
+    this.category,
+    this.desc,
+    this.gender,
+    this.productId,
+    this.productName,
+    this.variant,
+    this.imageUrl,
+    this.quantity,
+  });
 }

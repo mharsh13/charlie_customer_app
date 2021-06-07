@@ -48,6 +48,7 @@ class _CartScreenState extends State<CartScreen> {
                 productName: product.name,
                 variant: variant,
                 imageUrl: product.imageUrl[0],
+                quantity: cartItem.quantity,
               ));
             }
           });
@@ -62,11 +63,13 @@ class _CartScreenState extends State<CartScreen> {
     var height = MediaQuery.of(context).size.height;
     var totalPrice = 0.0;
     orderList.forEach((order) {
-      totalPrice += double.parse(order.variant.sellingPrice);
+      totalPrice += (double.parse(order.variant.sellingPrice) *
+          double.parse(order.quantity));
     });
     var totalCost = 0.0;
     orderList.forEach((order) {
-      totalCost += double.parse(order.variant.costPrice);
+      totalCost += (double.parse(order.variant.costPrice) *
+          double.parse(order.quantity));
     });
     return Scaffold(
       backgroundColor: Colors.white,
@@ -318,7 +321,7 @@ class _CartScreenState extends State<CartScreen> {
                                     Container(
                                       width: width * 0.5,
                                       child: Text(
-                                        "${orderList[index].gender}/${orderList[index].category}",
+                                        "${orderList[index].gender} / ${orderList[index].category} / ${orderList[index].brand}",
                                         overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.montserrat(
                                           color: Colors.grey,
@@ -329,7 +332,7 @@ class _CartScreenState extends State<CartScreen> {
                                     Container(
                                       width: width * 0.5,
                                       child: Text(
-                                        "${orderList[index].brand}",
+                                        "Quanity: ${orderList[index].quantity}",
                                         overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.montserrat(
                                           color: Colors.grey,
@@ -436,6 +439,7 @@ class _CartScreenState extends State<CartScreen> {
                                               orderList[index].productId,
                                           "VariantId":
                                               orderList[index].variant.id,
+                                          "Quantity": orderList[index].quantity,
                                         };
                                         CollectionReference userInformation =
                                             firestore
