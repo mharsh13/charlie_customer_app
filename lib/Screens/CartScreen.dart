@@ -75,62 +75,130 @@ class _CartScreenState extends State<CartScreen> {
       backgroundColor: Colors.white,
       bottomNavigationBar: Card(
         color: Colors.white,
+        elevation: 20,
         margin: EdgeInsets.all(0),
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 20),
-          height: height * 0.2,
+          height: height * 0.3,
           width: width,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
                 height: height * 0.02,
               ),
+              Container(
+                child: Text(
+                  orderList.length == 1
+                      ? "Price Details (${orderList.length} Item)"
+                      : "Price Details (${orderList.length} Items)",
+                  style: GoogleFonts.montserrat(
+                    color: HexColor("#302a30"),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+              Divider(),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  Container(
+                    child: Text(
+                      "Total MRP",
+                      style: GoogleFonts.montserrat(
+                        color: Colors.grey,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
                   Row(
                     children: [
-                      Container(
-                        child: Text(
-                          "Total",
-                          style: GoogleFonts.montserrat(
-                            color: Colors.grey,
-                            fontSize: 14,
-                          ),
+                      Icon(
+                        MdiIcons.currencyInr,
+                        size: 14,
+                      ),
+                      Text(
+                        "$totalCost",
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.montserrat(
+                          color: HexColor("#302a30"),
+                          fontSize: 14,
                         ),
                       ),
-                      SizedBox(
-                        width: width * 0.01,
+                    ],
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    child: Text(
+                      "Discount on MRP",
+                      style: GoogleFonts.montserrat(
+                        color: Colors.grey,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        "-",
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.montserrat(
+                          color: Colors.green,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       Icon(
                         MdiIcons.currencyInr,
-                        size: 18,
+                        size: 14,
+                        color: Colors.green,
                       ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            "$totalPrice",
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.montserrat(
-                              color: HexColor("#302a30"),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          SizedBox(
-                            width: width * .02,
-                          ),
-                          Text(
-                            "$totalCost",
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.montserrat(
-                              color: Colors.grey,
-                              fontSize: 12,
-                              decoration: TextDecoration.lineThrough,
-                            ),
-                          ),
-                        ],
+                      Text(
+                        "${totalCost - totalPrice}",
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.montserrat(
+                          color: Colors.green,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Divider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    child: Text(
+                      "Total Amount",
+                      style: GoogleFonts.montserrat(
+                        color: HexColor("#302a30"),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Icon(
+                        MdiIcons.currencyInr,
+                        size: 16,
+                        color: HexColor("#302a30"),
+                      ),
+                      Text(
+                        "$totalPrice",
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.montserrat(
+                          color: HexColor("#302a30"),
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                        ),
                       ),
                     ],
                   ),
