@@ -515,7 +515,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     });
                   },
                   child: Container(
-                    width: width * 0.2,
+                    // width: width * 0.2,
                     padding: EdgeInsets.all(10),
                     margin: EdgeInsets.only(right: 10),
                     decoration: BoxDecoration(
@@ -599,39 +599,50 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       });
                     });
                   },
-                  child: Card(
-                    margin: EdgeInsets.only(right: 20),
-                    elevation:
-                        selectedVariantModel.colorCode == colorList[index]
-                            ? 5
-                            : 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        18,
-                      ),
-                    ),
-                    child: Container(
-                      width: selectedVariantModel.colorCode == colorList[index]
-                          ? width * 0.1
-                          : width * 0.06,
-                      padding: EdgeInsets.all(1),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color:
+                  child: colorList[index] == ""
+                      ? Container(
+                          child: Text(
+                            "Assorted Colors",
+                            style: GoogleFonts.montserrat(
+                              color: Colors.grey,
+                              fontSize: 12,
+                            ),
+                          ),
+                        )
+                      : Card(
+                          margin: EdgeInsets.only(right: 20),
+                          elevation:
                               selectedVariantModel.colorCode == colorList[index]
-                                  ? Colors.transparent
-                                  : Colors.grey,
+                                  ? 5
+                                  : 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              18,
+                            ),
+                          ),
+                          child: Container(
+                            width: selectedVariantModel.colorCode ==
+                                    colorList[index]
+                                ? width * 0.1
+                                : width * 0.06,
+                            padding: EdgeInsets.all(1),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: selectedVariantModel.colorCode ==
+                                        colorList[index]
+                                    ? Colors.transparent
+                                    : Colors.grey,
+                              ),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: HexColor("${colorList[index]}"),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
                         ),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: HexColor("${colorList[index]}"),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                  ),
                 ),
                 itemCount: colorList.length,
               ),
