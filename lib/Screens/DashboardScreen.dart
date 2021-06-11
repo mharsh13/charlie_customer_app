@@ -96,8 +96,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
                       userInfo != null
-                          ? "Hello " +
-                              "${userInfo.username.substring(0, userInfo.username.indexOf(" "))}!"
+                          ? userInfo.username.contains(" ")
+                              ? "Hello ${userInfo.username.substring(0, userInfo.username.indexOf(" "))}!"
+                              : "Hello ${userInfo.username}!"
                           : "Hello!",
                       style: GoogleFonts.montserrat(
                         color: HexColor("#302a30").withOpacity(.8),

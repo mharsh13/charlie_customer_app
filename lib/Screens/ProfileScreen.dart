@@ -1,4 +1,6 @@
 import 'package:charlie_customer_app/Authentication/LoginScreen.dart';
+import 'package:charlie_customer_app/Screens/CartScreen.dart';
+import 'package:charlie_customer_app/Screens/EditProfile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -17,7 +19,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         content: Text(
-          'Are you sure you want to Logout',
+          'Are you sure you want to logout?',
         ),
         actions: [
           TextButton(
@@ -110,51 +112,69 @@ class _ProfileScreenState extends State<ProfileScreen> {
               height: height * 0.04,
             ),
             Divider(),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 30),
-              child: Row(
-                children: [
-                  Icon(
-                    FeatherIcons.user,
-                    color: HexColor("#302a30"),
-                    size: 30,
+            InkWell(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => EditProfileScreen(),
                   ),
-                  SizedBox(
-                    width: width * 0.1,
-                  ),
-                  Text(
-                    "My Profile",
-                    style: GoogleFonts.montserrat(
-                      color: HexColor("#302a30").withOpacity(.8),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
+                );
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 30),
+                child: Row(
+                  children: [
+                    Icon(
+                      FeatherIcons.user,
+                      color: HexColor("#302a30"),
+                      size: 30,
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      width: width * 0.1,
+                    ),
+                    Text(
+                      "My Profile",
+                      style: GoogleFonts.montserrat(
+                        color: HexColor("#302a30").withOpacity(.8),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             Divider(),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 30),
-              child: Row(
-                children: [
-                  Icon(
-                    FeatherIcons.shoppingCart,
-                    color: HexColor("#302a30"),
-                    size: 30,
+            InkWell(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => CartScreen(),
                   ),
-                  SizedBox(
-                    width: width * 0.1,
-                  ),
-                  Text(
-                    "Cart",
-                    style: GoogleFonts.montserrat(
-                      color: HexColor("#302a30").withOpacity(.8),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
+                );
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 30),
+                child: Row(
+                  children: [
+                    Icon(
+                      FeatherIcons.shoppingCart,
+                      color: HexColor("#302a30"),
+                      size: 30,
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      width: width * 0.1,
+                    ),
+                    Text(
+                      "Cart",
+                      style: GoogleFonts.montserrat(
+                        color: HexColor("#302a30").withOpacity(.8),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             Divider(),
@@ -254,27 +274,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             Divider(),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 30),
-              child: Row(
-                children: [
-                  Icon(
-                    FeatherIcons.logOut,
-                    color: HexColor("#302a30"),
-                    size: 30,
-                  ),
-                  SizedBox(
-                    width: width * 0.1,
-                  ),
-                  Text(
-                    "Sign Out",
-                    style: GoogleFonts.montserrat(
-                      color: HexColor("#302a30").withOpacity(.8),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
+            InkWell(
+              onTap: () {
+                logoutDialog(context);
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 30),
+                child: Row(
+                  children: [
+                    Icon(
+                      FeatherIcons.logOut,
+                      color: HexColor("#302a30"),
+                      size: 30,
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      width: width * 0.1,
+                    ),
+                    Text(
+                      "Sign Out",
+                      style: GoogleFonts.montserrat(
+                        color: HexColor("#302a30").withOpacity(.8),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

@@ -100,6 +100,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       backgroundColor: Colors.white,
       bottomNavigationBar: Card(
         color: Colors.white,
+        elevation: 20,
         margin: EdgeInsets.all(0),
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 20),
