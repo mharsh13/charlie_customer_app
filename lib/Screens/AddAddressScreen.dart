@@ -1,29 +1,30 @@
 import 'package:charlie_customer_app/Models/UserModel.dart';
 import 'package:charlie_customer_app/Providers/UserProvider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
-class EditProfileScreen extends StatefulWidget {
+class AddAddressScreen extends StatefulWidget {
   @override
-  _EditProfileScreenState createState() => _EditProfileScreenState();
+  _AddAddressScreenState createState() => _AddAddressScreenState();
 }
 
-class _EditProfileScreenState extends State<EditProfileScreen> {
+class _AddAddressScreenState extends State<AddAddressScreen> {
   TextEditingController phoneNo = new TextEditingController();
   TextEditingController username = new TextEditingController();
-  final _editProf = GlobalKey<FormState>();
+  TextEditingController pincode = new TextEditingController();
+  TextEditingController address = new TextEditingController();
+  final _addAddress = GlobalKey<FormState>();
 
   UserModel userInfo;
   bool _isLoading = false;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -56,7 +57,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         title: Container(
           width: width * 0.8,
           child: Text(
-            "Edit Profile",
+            "Add Address",
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.montserrat(
               color: Colors.white,
@@ -67,12 +68,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Form(
-            key: _editProf,
+        child: Form(
+          key: _addAddress,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(
                   height: height * 0.04,
@@ -108,11 +108,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   validator: (val) {
                     if (val.isEmpty) {
                       return "Enter in Field";
+                    } else if (val.length < 10) {
+                      return "Enter correct phone number";
                     } else
                       return null;
                   },
                   controller: phoneNo,
-                  readOnly: true,
                   cursorColor: HexColor('#f55d5d').withOpacity(.3),
                   keyboardType: TextInputType.phone,
                   decoration: InputDecoration(
@@ -132,29 +133,89 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     labelText: 'Enter phone number',
                   ),
                 ),
+                TextFormField(
+                  validator: (val) {
+                    if (val.isEmpty) {
+                      return "Enter in Field";
+                    } else
+                      return null;
+                  },
+                  controller: pincode,
+                  cursorColor: HexColor('#f55d5d').withOpacity(.3),
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    fillColor: Colors.white,
+                    floatingLabelBehavior: FloatingLabelBehavior.never,
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: HexColor('#f55d5d').withOpacity(.6),
+                        width: 2.0,
+                      ),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.pink[100],
+                      ),
+                    ),
+                    labelText: 'Enter Pincode',
+                  ),
+                ),
+                TextFormField(
+                  validator: (val) {
+                    if (val.isEmpty) {
+                      return "Enter in Field";
+                    } else
+                      return null;
+                  },
+                  controller: address,
+                  cursorColor: HexColor('#f55d5d').withOpacity(.3),
+                  keyboardType: TextInputType.name,
+                  decoration: InputDecoration(
+                    fillColor: Colors.white,
+                    floatingLabelBehavior: FloatingLabelBehavior.never,
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: HexColor('#f55d5d').withOpacity(.6),
+                        width: 2.0,
+                      ),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.pink[100],
+                      ),
+                    ),
+                    labelText: 'Apartment, Floor, Building, Street',
+                  ),
+                ),
                 SizedBox(
                   height: height * 0.1,
                 ),
                 Center(
                   child: InkWell(
                     onTap: () async {
-                      if (!_editProf.currentState.validate()) {
+                      if (!_addAddress.currentState.validate()) {
                         return;
                       }
                       setState(() {
                         _isLoading = true;
                       });
-                      CollectionReference userCollection =
-                          firestore.collection("User Information");
-                      await userCollection
+                      var userAddress = {
+                        "username": username.text,
+                        "phoneNumber": phoneNo.text,
+                        "pincode": pincode.text,
+                        "address": address.text,
+                      };
+                      CollectionReference userCollection = firestore
+                          .collection("User Information")
                           .doc(userInfo.id)
-                          .update({"username": username.text}).then((value) {
+                          .collection("User Address");
+                      await userCollection.add(userAddress).then((value) {
                         setState(() {
                           _isLoading = false;
                         });
                         final snackBar = SnackBar(
                           duration: Duration(seconds: 2),
-                          content: Text('Username Changed'),
+                          content: Text('Address Added'),
                           backgroundColor: HexColor("#f55d5d").withOpacity(0.8),
                           action: SnackBarAction(
                             label: 'Ok',
@@ -165,6 +226,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           snackBar,
                         );
+                        Navigator.of(context).pop();
                       });
                     },
                     child: Container(
@@ -184,7 +246,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    "Save changes",
+                                    "Add Address",
                                     style: GoogleFonts.poppins(
                                       color: Colors.white,
                                       fontSize: 16,
@@ -194,7 +256,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     width: width * 0.02,
                                   ),
                                   Icon(
-                                    FeatherIcons.save,
+                                    FeatherIcons.plus,
                                     color: Colors.white,
                                     size: 20,
                                   )

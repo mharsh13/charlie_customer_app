@@ -1,4 +1,5 @@
 import 'package:charlie_customer_app/Authentication/LoginScreen.dart';
+import 'package:charlie_customer_app/Screens/AddressBookScreen.dart';
 import 'package:charlie_customer_app/Screens/CartScreen.dart';
 import 'package:charlie_customer_app/Screens/EditProfile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -202,27 +203,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             Divider(),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 30),
-              child: Row(
-                children: [
-                  Icon(
-                    FeatherIcons.book,
-                    color: HexColor("#302a30"),
-                    size: 30,
+            InkWell(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AddressBookScreen(),
                   ),
-                  SizedBox(
-                    width: width * 0.1,
-                  ),
-                  Text(
-                    "Address Book",
-                    style: GoogleFonts.montserrat(
-                      color: HexColor("#302a30").withOpacity(.8),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
+                );
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 30),
+                child: Row(
+                  children: [
+                    Icon(
+                      FeatherIcons.book,
+                      color: HexColor("#302a30"),
+                      size: 30,
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      width: width * 0.1,
+                    ),
+                    Text(
+                      "Address Book",
+                      style: GoogleFonts.montserrat(
+                        color: HexColor("#302a30").withOpacity(.8),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             Divider(),
