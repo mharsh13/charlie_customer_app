@@ -1,4 +1,3 @@
-import 'package:charlie_customer_app/Models/CategoryModel.dart';
 import 'package:charlie_customer_app/Models/ProductModel.dart';
 import 'package:flutter/material.dart';
 

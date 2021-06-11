@@ -1,4 +1,4 @@
-import 'package:charlie_customer_app/Models/BrandModel.dart';
+
 import 'package:charlie_customer_app/Models/GenderModel.dart';
 import 'package:flutter/material.dart';
 

@@ -1,13 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:charlie_customer_app/Models/CategoryModel.dart';
 import 'package:charlie_customer_app/Models/ProductModel.dart';
 import 'package:charlie_customer_app/Models/UserModel.dart';
-import 'package:charlie_customer_app/Providers/CategoryProvider.dart';
+
 import 'package:charlie_customer_app/Providers/ProductProvider.dart';
 import 'package:charlie_customer_app/Providers/UserProvider.dart';
 import 'package:charlie_customer_app/Screens/AllProductsScreen.dart';
 import 'package:charlie_customer_app/Screens/CartScreen.dart';
-import 'package:charlie_customer_app/Screens/ProductDetailScreen.dart';
+
 import 'package:charlie_customer_app/Screens/SearchScreen.dart';
 import 'package:charlie_customer_app/Widgets/ProductGrid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
