@@ -63,7 +63,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Text(
-                "Wishlist!",
+                "Wishlist",
                 style: GoogleFonts.montserrat(
                   color: HexColor("#302a30").withOpacity(.8),
                   fontSize: 22,

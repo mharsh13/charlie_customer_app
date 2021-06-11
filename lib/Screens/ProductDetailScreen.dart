@@ -602,7 +602,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   child: colorList[index] == ""
                       ? Container(
                           child: Text(
-                            "Assorted Colors",
+                            "Mix Colors",
                             style: GoogleFonts.montserrat(
                               color: Colors.grey,
                               fontSize: 12,

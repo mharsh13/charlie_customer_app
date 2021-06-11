@@ -122,7 +122,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                         Container(
                           height: height * 0.1,
                           width: width * .3,
-                          padding: EdgeInsets.all(10),
                           child: CachedNetworkImage(
                             imageUrl: "${genderList[index].imageUrl}",
                             placeholder: (context, url) => SpinKitRing(
