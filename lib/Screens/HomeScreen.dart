@@ -221,7 +221,6 @@ class _HomeScreenState extends State<HomeScreen>
         });
       });
       setState(() {
-        print(productList);
         Provider.of<ProductProvider>(context, listen: false)
             .setProductList(productList);
         _isLoading = false;
