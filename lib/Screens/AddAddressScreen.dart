@@ -1,3 +1,4 @@
+import 'package:charlie_customer_app/Models/AddressModel.dart';
 import 'package:charlie_customer_app/Models/UserModel.dart';
 import 'package:charlie_customer_app/Providers/UserProvider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,6 +12,10 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 
 class AddAddressScreen extends StatefulWidget {
+  final bool isEdit;
+  final AddressModel selectedAddress;
+
+  AddAddressScreen({this.isEdit, this.selectedAddress});
   @override
   _AddAddressScreenState createState() => _AddAddressScreenState();
 }
@@ -31,6 +36,12 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     userInfo = Provider.of<UserProvider>(context, listen: false).userInfo;
     phoneNo.text = userInfo.phoneNumber;
     username.text = userInfo.username;
+    if (widget.isEdit) {
+      phoneNo.text = widget.selectedAddress.phoneNumber;
+      address.text = widget.selectedAddress.address;
+      username.text = widget.selectedAddress.username;
+      pincode.text = widget.selectedAddress.pincode;
+    }
     super.initState();
   }
 
@@ -205,29 +216,62 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                         "pincode": pincode.text,
                         "address": address.text,
                       };
-                      CollectionReference userCollection = firestore
-                          .collection("User Information")
-                          .doc(userInfo.id)
-                          .collection("User Address");
-                      await userCollection.add(userAddress).then((value) {
-                        setState(() {
-                          _isLoading = false;
+                      if (!widget.isEdit) {
+                        CollectionReference userCollection = firestore
+                            .collection("User Information")
+                            .doc(userInfo.id)
+                            .collection("User Address");
+                        await userCollection.add(userAddress).then((value) {
+                          setState(() {
+                            _isLoading = false;
+                          });
+                          final snackBar = SnackBar(
+                            duration: Duration(seconds: 2),
+                            content: Text('Address Added'),
+                            backgroundColor:
+                                HexColor("#f55d5d").withOpacity(0.8),
+                            action: SnackBarAction(
+                              label: 'Ok',
+                              textColor: Colors.white,
+                              onPressed: () {},
+                            ),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            snackBar,
+                          );
+                          Navigator.of(context).pop();
                         });
-                        final snackBar = SnackBar(
-                          duration: Duration(seconds: 2),
-                          content: Text('Address Added'),
-                          backgroundColor: HexColor("#f55d5d").withOpacity(0.8),
-                          action: SnackBarAction(
-                            label: 'Ok',
-                            textColor: Colors.white,
-                            onPressed: () {},
-                          ),
+                      } else {
+                        CollectionReference userCollection = firestore
+                            .collection("User Information")
+                            .doc(userInfo.id)
+                            .collection("User Address");
+                        userCollection
+                            .doc(widget.selectedAddress.id)
+                            .update(userAddress)
+                            .then(
+                          (value) {
+                            setState(() {
+                              _isLoading = false;
+                            });
+                            final snackBar = SnackBar(
+                              duration: Duration(seconds: 2),
+                              content: Text('Address Updated'),
+                              backgroundColor:
+                                  HexColor("#f55d5d").withOpacity(0.8),
+                              action: SnackBarAction(
+                                label: 'Ok',
+                                textColor: Colors.white,
+                                onPressed: () {},
+                              ),
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              snackBar,
+                            );
+                            Navigator.of(context).pop();
+                          },
                         );
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          snackBar,
-                        );
-                        Navigator.of(context).pop();
-                      });
+                      }
                     },
                     child: Container(
                       width: width * 0.6,
@@ -246,7 +290,9 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    "Add Address",
+                                    widget.isEdit
+                                        ? "Save Changes"
+                                        : "Add Address",
                                     style: GoogleFonts.poppins(
                                       color: Colors.white,
                                       fontSize: 16,
@@ -256,7 +302,9 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                                     width: width * 0.02,
                                   ),
                                   Icon(
-                                    FeatherIcons.plus,
+                                    widget.isEdit
+                                        ? FeatherIcons.save
+                                        : FeatherIcons.plus,
                                     color: Colors.white,
                                     size: 20,
                                   )

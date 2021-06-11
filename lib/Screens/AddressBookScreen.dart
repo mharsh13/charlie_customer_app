@@ -102,7 +102,9 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => AddAddressScreen(),
+                  builder: (context) => AddAddressScreen(
+                    isEdit: false,
+                  ),
                 ),
               );
             },
@@ -175,6 +177,18 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
                                 child: Row(
                                   children: [
                                     InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                AddAddressScreen(
+                                              isEdit: true,
+                                              selectedAddress:
+                                                  addressList[index],
+                                            ),
+                                          ),
+                                        );
+                                      },
                                       child: Container(
                                         child: Text(
                                           "EDIT",
@@ -190,6 +204,24 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
                                       width: width * 0.05,
                                     ),
                                     InkWell(
+                                      onTap: () async {
+                                        setState(() {
+                                          _isLoading = true;
+                                        });
+                                        CollectionReference userCollection =
+                                            firestore
+                                                .collection("User Information")
+                                                .doc(userInfo.id)
+                                                .collection("User Address");
+                                        await userCollection
+                                            .doc(addressList[index].id)
+                                            .delete()
+                                            .then((value) {
+                                          setState(() {
+                                            _isLoading = false;
+                                          });
+                                        });
+                                      },
                                       child: Container(
                                         child: Text(
                                           "DELETE",
