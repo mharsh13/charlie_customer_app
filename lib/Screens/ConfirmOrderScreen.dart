@@ -1,12 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charlie_customer_app/Models/AddressModel.dart';
 import 'package:charlie_customer_app/Models/OrderModel.dart';
+import 'package:charlie_customer_app/Models/UserModel.dart';
+import 'package:charlie_customer_app/Providers/UserProvider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:provider/provider.dart';
 
 class ConfirmOrderScreen extends StatefulWidget {
   final List<OrderModel> orderList;
@@ -18,6 +22,15 @@ class ConfirmOrderScreen extends StatefulWidget {
 }
 
 class _ConfirmOrderScreenState extends State<ConfirmOrderScreen> {
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  bool _isLoading = false;
+  UserModel userInfo;
+  @override
+  void initState() {
+    userInfo = Provider.of<UserProvider>(context, listen: false).userInfo;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -420,7 +433,52 @@ class _ConfirmOrderScreenState extends State<ConfirmOrderScreen> {
             ),
             Center(
               child: InkWell(
-                onTap: () {},
+                onTap: () async {
+                  setState(() {
+                    _isLoading = true;
+                  });
+                  List orderList = [];
+                  widget.orderList.forEach((order) async {
+                    orderList.add({
+                      "orderDetails": {
+                        "productId": order.productId,
+                        "variantId": order.variant.id,
+                        "quantity": order.quantity,
+                      }
+                    });
+                  });
+
+                  CollectionReference orderCollection =
+                      firestore.collection("Orders");
+                  await orderCollection.add({
+                    "OrderList": orderList,
+                    "UserId": userInfo.id,
+                    "AddressId": widget.address.id,
+                  });
+                  CollectionReference userCollection =
+                      firestore.collection("User Information");
+                  await userCollection.doc(userInfo.id).update({
+                    "Cart Items": [],
+                  });
+                  setState(() {
+                    _isLoading = false;
+                  });
+                  final snackBar = SnackBar(
+                    duration: Duration(seconds: 2),
+                    content: Text('Order Placed Successfully!'),
+                    backgroundColor: HexColor("#f55d5d").withOpacity(0.8),
+                    action: SnackBarAction(
+                      label: 'Ok',
+                      textColor: Colors.white,
+                      onPressed: () {},
+                    ),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    snackBar,
+                  );
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                },
                 child: Container(
                   width: width * 0.6,
                   padding: EdgeInsets.all(6),
@@ -429,26 +487,31 @@ class _ConfirmOrderScreenState extends State<ConfirmOrderScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Confirm Order",
-                          style: GoogleFonts.poppins(
+                    child: _isLoading
+                        ? SpinKitThreeBounce(
                             color: Colors.white,
-                            fontSize: 16,
+                            size: 24,
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Confirm Order",
+                                style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              SizedBox(
+                                width: width * 0.02,
+                              ),
+                              Icon(
+                                FeatherIcons.check,
+                                color: Colors.white,
+                                size: 20,
+                              )
+                            ],
                           ),
-                        ),
-                        SizedBox(
-                          width: width * 0.02,
-                        ),
-                        Icon(
-                          FeatherIcons.check,
-                          color: Colors.white,
-                          size: 20,
-                        )
-                      ],
-                    ),
                   ),
                 ),
               ),
