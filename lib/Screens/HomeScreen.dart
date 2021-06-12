@@ -1,3 +1,4 @@
+import 'package:charlie_customer_app/Models/AddressModel.dart';
 import 'package:charlie_customer_app/Models/BrandModel.dart';
 import 'package:charlie_customer_app/Models/CartModel.dart';
 import 'package:charlie_customer_app/Models/CategoryModel.dart';
@@ -37,6 +38,35 @@ class _HomeScreenState extends State<HomeScreen>
   List<ProductModel> productList = [];
   List<BrandModel> brandList = [];
   List<GenderModel> genderList = [];
+  List<AddressModel> addressList = [];
+
+  void fetchAddress() {
+    setState(() {
+      _isLoading = true;
+    });
+    CollectionReference addressCollection = firestore
+        .collection("User Information")
+        .doc(_firebaseAuth.currentUser.uid)
+        .collection("User Address");
+    addressCollection.snapshots().listen((event) {
+      addressList = [];
+      event.docs.forEach((doc) {
+        Map object = doc.data();
+        addressList.add(
+          AddressModel(
+            address: object["address"],
+            id: doc.id,
+            phoneNumber: object["phoneNumber"],
+            pincode: object["pincode"],
+            username: object["username"],
+          ),
+        );
+      });
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
 
   fetchUserInfo() async {
     setState(() {
@@ -72,6 +102,7 @@ class _HomeScreenState extends State<HomeScreen>
             username: object["username"],
             userFavList: userFavs,
             cartList: cartItems,
+            addressList: addressList,
           );
         }
       });
@@ -231,7 +262,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
-
+    fetchAddress();
     fetchUserInfo();
     fetchCategory();
     fetchBrand();

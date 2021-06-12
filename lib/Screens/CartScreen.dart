@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:charlie_customer_app/Models/AddressModel.dart';
 import 'package:charlie_customer_app/Models/OrderModel.dart';
 import 'package:charlie_customer_app/Models/ProductModel.dart';
 import 'package:charlie_customer_app/Models/UserModel.dart';
 import 'package:charlie_customer_app/Providers/ProductProvider.dart';
 import 'package:charlie_customer_app/Providers/UserProvider.dart';
+import 'package:charlie_customer_app/Screens/ConfirmOrderScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_select/smart_select.dart';
 
 class CartScreen extends StatefulWidget {
   @override
@@ -24,6 +27,8 @@ class _CartScreenState extends State<CartScreen> {
   final FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   List<OrderModel> orderList = [];
+  AddressModel addressValue;
+  List<S2Choice<AddressModel>> addressRadio = [];
 
   bool _isLoading = false;
   UserModel userInfo;
@@ -53,6 +58,12 @@ class _CartScreenState extends State<CartScreen> {
           });
         }
       });
+    });
+
+    userInfo.addressList.forEach((address) {
+      addressRadio.add(
+        S2Choice<AddressModel>(value: address, title: address.address),
+      );
     });
   }
 
@@ -204,42 +215,65 @@ class _CartScreenState extends State<CartScreen> {
                 ],
               ),
               SizedBox(
-                height: height * 0.03,
+                height: height * 0.05,
               ),
               Center(
-                child: InkWell(
-                  onTap: () async {},
-                  child: Container(
-                    width: width * 0.6,
-                    padding: EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: HexColor("#f55d5d").withOpacity(0.8),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Order Now",
-                            style: GoogleFonts.poppins(
-                              color: Colors.white,
-                              fontSize: 16,
+                child: SmartSelect<AddressModel>.single(
+                    title: "Address",
+                    modalTitle: "Choose Address",
+                    value: addressValue,
+                    choiceItems: addressRadio,
+                    tileBuilder: (context, state) => InkWell(
+                          onTap: () {
+                            state.showModal();
+                          },
+                          child: Container(
+                            width: width * 0.6,
+                            padding: EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: HexColor("#f55d5d").withOpacity(0.8),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Order Now",
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: width * 0.02,
+                                  ),
+                                  Icon(
+                                    FeatherIcons.shoppingBag,
+                                    color: Colors.white,
+                                    size: 20,
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                          SizedBox(
-                            width: width * 0.02,
-                          ),
-                          Icon(
-                            FeatherIcons.shoppingBag,
-                            color: Colors.white,
-                            size: 20,
-                          )
-                        ],
-                      ),
+                        ),
+                    choiceType: S2ChoiceType.radios,
+                    modalType: S2ModalType.bottomSheet,
+                    choiceStyle: S2ChoiceStyle(
+                      activeColor: HexColor("#f55d5d").withOpacity(0.8),
                     ),
-                  ),
-                ),
+                    onChange: (state) {
+                      setState(() => addressValue = state.value);
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ConfirmOrderScreen(
+                            orderList: orderList,
+                            address: addressValue,
+                          ),
+                        ),
+                      );
+                    }),
               ),
             ],
           ),
@@ -428,8 +462,13 @@ class _CartScreenState extends State<CartScreen> {
                                             width: width * 0.03,
                                           ),
                                           Text(
-                                            "Color: " +
-                                                "${orderList[index].variant.colorName}",
+                                            orderList[index]
+                                                        .variant
+                                                        .colorName ==
+                                                    ""
+                                                ? "Color: Mix Color"
+                                                : "Color: " +
+                                                    "${orderList[index].variant.colorName}",
                                             overflow: TextOverflow.ellipsis,
                                             style: GoogleFonts.montserrat(
                                               color: HexColor("#302a30")
