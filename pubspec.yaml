@@ -50,6 +50,7 @@ dependencies:
   modal_bottom_sheet: ^2.0.0
   smart_select: ^4.3.2
   intl: ^0.17.0 
+  timelines: ^0.0.2+1
 
 dev_dependencies:
   flutter_test:

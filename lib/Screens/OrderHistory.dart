@@ -1,5 +1,6 @@
 import 'package:charlie_customer_app/Models/UserModel.dart';
 import 'package:charlie_customer_app/Providers/UserProvider.dart';
+import 'package:charlie_customer_app/Screens/OrderSummaryScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -69,6 +70,15 @@ class _OrderHistoryState extends State<OrderHistory> {
               height: height,
               child: ListView.builder(
                 itemBuilder: (context, index) => InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => OrderSummaryScreen(
+                          orderSummary: userInfo.orderSummary[index],
+                        ),
+                      ),
+                    );
+                  },
                   child: Card(
                     elevation: 10,
                     margin: EdgeInsets.only(left: 20, right: 20, top: 30),
