@@ -1,5 +1,6 @@
 import 'package:charlie_customer_app/Models/AddressModel.dart';
 import 'package:charlie_customer_app/Models/CartModel.dart';
+import 'package:charlie_customer_app/Models/OrderSummaryModel.dart';
 
 class UserModel {
   String username;
@@ -8,6 +9,7 @@ class UserModel {
   List<String> userFavList;
   List<CartModel> cartList;
   List<AddressModel> addressList;
+  OrderSummary orderSummary;
   UserModel({
     this.id,
     this.phoneNumber,
@@ -15,5 +17,6 @@ class UserModel {
     this.userFavList,
     this.cartList,
     this.addressList,
+    this.orderSummary,
   });
 }

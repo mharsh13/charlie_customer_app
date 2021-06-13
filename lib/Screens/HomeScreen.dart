@@ -3,6 +3,8 @@ import 'package:charlie_customer_app/Models/BrandModel.dart';
 import 'package:charlie_customer_app/Models/CartModel.dart';
 import 'package:charlie_customer_app/Models/CategoryModel.dart';
 import 'package:charlie_customer_app/Models/GenderModel.dart';
+import 'package:charlie_customer_app/Models/OrderItemModel.dart';
+import 'package:charlie_customer_app/Models/OrderSummaryModel.dart';
 import 'package:charlie_customer_app/Models/ProductModel.dart';
 import 'package:charlie_customer_app/Models/UserModel.dart';
 import 'package:charlie_customer_app/Models/VariantModel.dart';
@@ -39,6 +41,41 @@ class _HomeScreenState extends State<HomeScreen>
   List<BrandModel> brandList = [];
   List<GenderModel> genderList = [];
   List<AddressModel> addressList = [];
+  OrderSummary orderSummary;
+
+  fetchOrderSummary() {
+    setState(() {
+      _isLoading = true;
+    });
+    CollectionReference orderCollection = firestore.collection("Orders");
+    orderCollection
+        .where("UserId", isEqualTo: _firebaseAuth.currentUser.uid)
+        .snapshots()
+        .listen((event) {
+      event.docs.forEach((doc) {
+        Map object = doc.data();
+        List<OrderItemModel> orderItems = [];
+        var list = object["OrderList"];
+        list.forEach((e) {
+          orderItems.add(
+            OrderItemModel(
+              productId: e["orderDetails"]["productId"],
+              quantity: e["orderDetails"]["quantity"],
+              variantId: e["orderDetails"]["variantId"],
+            ),
+          );
+        });
+        orderSummary = OrderSummary(
+          addressId: object["AddressId"],
+          id: doc.id,
+          orderList: orderItems,
+        );
+      });
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
 
   void fetchAddress() {
     setState(() {
@@ -103,6 +140,7 @@ class _HomeScreenState extends State<HomeScreen>
             userFavList: userFavs,
             cartList: cartItems,
             addressList: addressList,
+            orderSummary: orderSummary,
           );
         }
       });
@@ -262,6 +300,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
+    fetchOrderSummary();
     fetchAddress();
     fetchUserInfo();
     fetchCategory();

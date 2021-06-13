@@ -2,6 +2,7 @@ import 'package:charlie_customer_app/Authentication/LoginScreen.dart';
 import 'package:charlie_customer_app/Screens/AddressBookScreen.dart';
 import 'package:charlie_customer_app/Screens/CartScreen.dart';
 import 'package:charlie_customer_app/Screens/EditProfile.dart';
+import 'package:charlie_customer_app/Screens/OrderHistory.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -179,27 +180,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             Divider(),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 30),
-              child: Row(
-                children: [
-                  Icon(
-                    FeatherIcons.package,
-                    color: HexColor("#302a30"),
-                    size: 30,
+            InkWell(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => OrderHistory(),
                   ),
-                  SizedBox(
-                    width: width * 0.1,
-                  ),
-                  Text(
-                    "Order History",
-                    style: GoogleFonts.montserrat(
-                      color: HexColor("#302a30").withOpacity(.8),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
+                );
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 30),
+                child: Row(
+                  children: [
+                    Icon(
+                      FeatherIcons.package,
+                      color: HexColor("#302a30"),
+                      size: 30,
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      width: width * 0.1,
+                    ),
+                    Text(
+                      "Order History",
+                      style: GoogleFonts.montserrat(
+                        color: HexColor("#302a30").withOpacity(.8),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             Divider(),
