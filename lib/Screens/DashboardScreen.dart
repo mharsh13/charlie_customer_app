@@ -75,24 +75,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   );
                 },
               ),
-              if (userInfo.cartList.length != 0)
-                Positioned(
-                  right: 5,
-                  top: 5,
-                  child: CircleAvatar(
-                    radius: 8,
-                    backgroundColor: Colors.yellow,
-                    child: Center(
-                      child: Text(
-                        "${userInfo.cartList.length}",
-                        style: GoogleFonts.roboto(
-                          color: Colors.black,
-                          fontSize: 10,
+              if (userInfo != null)
+                if (userInfo.cartList.length != 0)
+                  Positioned(
+                    right: 5,
+                    top: 5,
+                    child: CircleAvatar(
+                      radius: 8,
+                      backgroundColor: Colors.yellow,
+                      child: Center(
+                        child: Text(
+                          "${userInfo.cartList.length}",
+                          style: GoogleFonts.roboto(
+                            color: Colors.black,
+                            fontSize: 10,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                )
+                  )
             ],
           )
         ],

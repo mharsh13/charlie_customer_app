@@ -9,7 +9,7 @@ class UserModel {
   List<String> userFavList;
   List<CartModel> cartList;
   List<AddressModel> addressList;
-  OrderSummary orderSummary;
+  List<OrderSummary> orderSummary;
   UserModel({
     this.id,
     this.phoneNumber,

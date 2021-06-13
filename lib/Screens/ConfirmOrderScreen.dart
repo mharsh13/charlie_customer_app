@@ -12,6 +12,8 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
+import 'HomeScreen.dart';
+
 class ConfirmOrderScreen extends StatefulWidget {
   final List<OrderModel> orderList;
   final AddressModel address;
@@ -453,7 +455,16 @@ class _ConfirmOrderScreenState extends State<ConfirmOrderScreen> {
                   await orderCollection.add({
                     "OrderList": orderList,
                     "UserId": userInfo.id,
-                    "AddressId": widget.address.id,
+                    "Address": {
+                      "id": widget.address.id,
+                      "username": widget.address.username,
+                      "address": widget.address.address,
+                      "pincode": widget.address.pincode,
+                      "phoneNumber": widget.address.phoneNumber,
+                    },
+                    "Status": "Placed",
+                    "Date": DateTime.now().toString(),
+                    "Total": totalPrice.toString(),
                   });
                   CollectionReference userCollection =
                       firestore.collection("User Information");
@@ -476,8 +487,12 @@ class _ConfirmOrderScreenState extends State<ConfirmOrderScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     snackBar,
                   );
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => HomeScreen(),
+                    ),
+                  );
                 },
                 child: Container(
                   width: width * 0.6,

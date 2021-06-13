@@ -48,7 +48,8 @@ dependencies:
   provider:
   page_view_indicators:
   modal_bottom_sheet: ^2.0.0
-  smart_select: ^4.3.2 
+  smart_select: ^4.3.2
+  intl: ^0.17.0 
 
 dev_dependencies:
   flutter_test:

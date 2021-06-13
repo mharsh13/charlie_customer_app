@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen>
   List<BrandModel> brandList = [];
   List<GenderModel> genderList = [];
   List<AddressModel> addressList = [];
-  OrderSummary orderSummary;
+  List<OrderSummary> orderSummary = [];
 
   fetchOrderSummary() {
     setState(() {
@@ -52,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen>
         .where("UserId", isEqualTo: _firebaseAuth.currentUser.uid)
         .snapshots()
         .listen((event) {
+      orderSummary = [];
       event.docs.forEach((doc) {
         Map object = doc.data();
         List<OrderItemModel> orderItems = [];
@@ -65,10 +66,21 @@ class _HomeScreenState extends State<HomeScreen>
             ),
           );
         });
-        orderSummary = OrderSummary(
-          addressId: object["AddressId"],
-          id: doc.id,
-          orderList: orderItems,
+        orderSummary.add(
+          OrderSummary(
+            address: AddressModel(
+              address: object["Address"]["address"],
+              id: object["Address"]["id"],
+              phoneNumber: object["Address"]["phoneNumber"],
+              pincode: object["Address"]["pincode"],
+              username: object["Address"]["username"],
+            ),
+            id: doc.id,
+            orderList: orderItems,
+            date: object["Date"],
+            status: object["Status"],
+            total: object["Total"],
+          ),
         );
       });
       setState(() {
