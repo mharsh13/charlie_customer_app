@@ -63,15 +63,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: Icon(FeatherIcons.shoppingCart),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => CartScreen(),
-                ),
-              );
-            },
+          Stack(
+            children: [
+              IconButton(
+                icon: Icon(FeatherIcons.shoppingCart),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => CartScreen(),
+                    ),
+                  );
+                },
+              ),
+              if (userInfo.cartList.length != 0)
+                Positioned(
+                  right: 5,
+                  top: 5,
+                  child: CircleAvatar(
+                    radius: 8,
+                    backgroundColor: Colors.yellow,
+                    child: Center(
+                      child: Text(
+                        "${userInfo.cartList.length}",
+                        style: GoogleFonts.roboto(
+                          color: Colors.black,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+            ],
           )
         ],
       ),

@@ -5,6 +5,7 @@ import 'package:charlie_customer_app/Models/ProductModel.dart';
 import 'package:charlie_customer_app/Models/UserModel.dart';
 import 'package:charlie_customer_app/Providers/ProductProvider.dart';
 import 'package:charlie_customer_app/Providers/UserProvider.dart';
+import 'package:charlie_customer_app/Screens/AddAddressScreen.dart';
 import 'package:charlie_customer_app/Screens/ConfirmOrderScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,6 +30,7 @@ class _CartScreenState extends State<CartScreen> {
   List<OrderModel> orderList = [];
   AddressModel addressValue;
   List<S2Choice<AddressModel>> addressRadio = [];
+  List<AddressModel> addressList = [];
 
   bool _isLoading = false;
   UserModel userInfo;
@@ -223,6 +225,69 @@ class _CartScreenState extends State<CartScreen> {
                     modalTitle: "Choose Address",
                     value: addressValue,
                     choiceItems: addressRadio,
+                    choiceEmptyBuilder: (context, value) => Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              child: Text(
+                                "Please add an address to continue!",
+                                style: GoogleFonts.montserrat(
+                                  color: Colors.grey,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: height * 0.05,
+                            ),
+                            Center(
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          AddAddressScreen(
+                                        isEdit: false,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  width: width * 0.6,
+                                  height: height * 0.05,
+                                  padding: EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: HexColor("#f55d5d").withOpacity(0.8),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Center(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "Add Address",
+                                          style: GoogleFonts.poppins(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: width * 0.02,
+                                        ),
+                                        Icon(
+                                          FeatherIcons.mapPin,
+                                          color: Colors.white,
+                                          size: 20,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                     tileBuilder: (context, state) => InkWell(
                           onTap: () {
                             state.showModal();
