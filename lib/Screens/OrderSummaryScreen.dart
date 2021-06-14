@@ -38,6 +38,15 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   void initState() {
     userInfo = Provider.of<UserProvider>(context, listen: false).userInfo;
     productList = Provider.of<ProductProvider>(context, listen: false).products;
+    if (widget.orderSummary.status == "Placed") {
+      currentIndex = 0;
+    } else if (widget.orderSummary.status == "Confirmed") {
+      currentIndex = 1;
+    } else if (widget.orderSummary.status == "Delivery") {
+      currentIndex = 2;
+    } else {
+      currentIndex = 3;
+    }
     widget.orderSummary.orderList.forEach((orderItem) {
       productList.forEach((product) {
         if (product.id == orderItem.productId) {

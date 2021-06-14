@@ -128,121 +128,136 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
                 children: [
                   Container(
                     height: height,
-                    child: ListView.builder(
-                      itemBuilder: (context, index) => Card(
-                        elevation: 10,
-                        margin: EdgeInsets.only(left: 20, right: 20, top: 30),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 20),
-                          width: width,
-                          child: Column(
-                            children: [
-                              Container(
-                                width: width * 0.8,
-                                child: Text(
-                                  "${addressList[index].username}",
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
+                    child: addressList.isEmpty
+                        ? Center(
+                            child: Text(
+                              "No address added!",
+                              style: GoogleFonts.montserrat(
+                                color: HexColor("#302a30"),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
                               ),
-                              SizedBox(
-                                height: height * 0.02,
-                              ),
-                              Container(
-                                width: width * 0.8,
-                                child: Text(
-                                  "${addressList[index].address}, ${addressList[index].pincode}",
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                width: width * 0.8,
-                                child: Text(
-                                  "Mobile Number : ${addressList[index].phoneNumber}",
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ),
-                              Divider(),
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 20),
-                                child: Row(
+                            ),
+                          )
+                        : ListView.builder(
+                            itemBuilder: (context, index) => Card(
+                              elevation: 10,
+                              margin:
+                                  EdgeInsets.only(left: 20, right: 20, top: 30),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(vertical: 20),
+                                width: width,
+                                child: Column(
                                   children: [
-                                    InkWell(
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                AddAddressScreen(
-                                              isEdit: true,
-                                              selectedAddress:
-                                                  addressList[index],
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      child: Container(
-                                        child: Text(
-                                          "EDIT",
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600,
-                                          ),
+                                    Container(
+                                      width: width * 0.8,
+                                      child: Text(
+                                        "${addressList[index].username}",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w400,
                                         ),
                                       ),
                                     ),
                                     SizedBox(
-                                      width: width * 0.05,
+                                      height: height * 0.02,
                                     ),
-                                    InkWell(
-                                      onTap: () async {
-                                        setState(() {
-                                          _isLoading = true;
-                                        });
-                                        CollectionReference userCollection =
-                                            firestore
-                                                .collection("User Information")
-                                                .doc(userInfo.id)
-                                                .collection("User Address");
-                                        await userCollection
-                                            .doc(addressList[index].id)
-                                            .delete()
-                                            .then((value) {
-                                          setState(() {
-                                            _isLoading = false;
-                                          });
-                                        });
-                                      },
-                                      child: Container(
-                                        child: Text(
-                                          "DELETE",
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 14,
-                                            color: Colors.red,
-                                            fontWeight: FontWeight.w600,
-                                          ),
+                                    Container(
+                                      width: width * 0.8,
+                                      child: Text(
+                                        "${addressList[index].address}, ${addressList[index].pincode}",
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: 12,
+                                          color: Colors.grey,
                                         ),
                                       ),
                                     ),
+                                    Container(
+                                      width: width * 0.8,
+                                      child: Text(
+                                        "Mobile Number : ${addressList[index].phoneNumber}",
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: 12,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ),
+                                    Divider(),
+                                    Container(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      child: Row(
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AddAddressScreen(
+                                                    isEdit: true,
+                                                    selectedAddress:
+                                                        addressList[index],
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: Container(
+                                              child: Text(
+                                                "EDIT",
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: width * 0.05,
+                                          ),
+                                          InkWell(
+                                            onTap: () async {
+                                              setState(() {
+                                                _isLoading = true;
+                                              });
+                                              CollectionReference
+                                                  userCollection = firestore
+                                                      .collection(
+                                                          "User Information")
+                                                      .doc(userInfo.id)
+                                                      .collection(
+                                                          "User Address");
+                                              await userCollection
+                                                  .doc(addressList[index].id)
+                                                  .delete()
+                                                  .then((value) {
+                                                setState(() {
+                                                  _isLoading = false;
+                                                });
+                                              });
+                                            },
+                                            child: Container(
+                                              child: Text(
+                                                "DELETE",
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize: 14,
+                                                  color: Colors.red,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
                                   ],
                                 ),
-                              )
-                            ],
+                              ),
+                            ),
+                            itemCount: addressList.length,
                           ),
-                        ),
-                      ),
-                      itemCount: addressList.length,
-                    ),
                   ),
                 ],
               ),

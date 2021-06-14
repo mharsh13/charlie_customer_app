@@ -2,7 +2,6 @@ import 'package:charlie_customer_app/Models/UserModel.dart';
 import 'package:charlie_customer_app/Providers/UserProvider.dart';
 import 'package:charlie_customer_app/Screens/OrderSummaryScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:intl/intl.dart';
@@ -20,7 +19,6 @@ class _OrderHistoryState extends State<OrderHistory> {
   @override
   void initState() {
     userInfo = Provider.of<UserProvider>(context, listen: false).userInfo;
-
     super.initState();
   }
 
@@ -68,110 +66,130 @@ class _OrderHistoryState extends State<OrderHistory> {
           children: [
             Container(
               height: height,
-              child: ListView.builder(
-                itemBuilder: (context, index) => InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => OrderSummaryScreen(
-                          orderSummary: userInfo.orderSummary[index],
+              child: userInfo.orderSummary.isEmpty
+                  ? Center(
+                      child: Text(
+                        "No orders made yet!",
+                        style: GoogleFonts.montserrat(
+                          color: HexColor("#302a30"),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
-                    );
-                  },
-                  child: Card(
-                    elevation: 10,
-                    margin: EdgeInsets.only(left: 20, right: 20, top: 30),
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                      width: width,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: width,
-                            child: Text(
-                              "Order : #${userInfo.orderSummary[index].id.substring(0, 10)}",
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.montserrat(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                    )
+                  : ListView.builder(
+                      itemBuilder: (context, index) {
+                        Color statusColor = Colors.yellow[800];
+                        if (userInfo.orderSummary[index].status == "Placed") {
+                          statusColor = Colors.yellow[800];
+                        } else {
+                          statusColor = Colors.green;
+                        }
+                        return InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => OrderSummaryScreen(
+                                  orderSummary: userInfo.orderSummary[index],
+                                ),
+                              ),
+                            );
+                          },
+                          child: Card(
+                            elevation: 10,
+                            margin:
+                                EdgeInsets.only(left: 20, right: 20, top: 30),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 20, horizontal: 20),
+                              width: width,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: width,
+                                    child: Text(
+                                      "Order : #${userInfo.orderSummary[index].id.substring(0, 10)}",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: height * 0.01,
+                                  ),
+                                  Container(
+                                    width: width,
+                                    child: Text(
+                                      "Date : ${formatDate(DateTime.parse(userInfo.orderSummary[index].date))}",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 14,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: width,
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          "Total : ",
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 14,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        Icon(
+                                          MdiIcons.currencyInr,
+                                          color: Colors.grey,
+                                          size: 14,
+                                        ),
+                                        Text(
+                                          "${userInfo.orderSummary[index].total}",
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 14,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    width: width,
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          "Status : ",
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 14,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        Text(
+                                          "${userInfo.orderSummary[index].status}",
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 14,
+                                            color: statusColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                          SizedBox(
-                            height: height * 0.01,
-                          ),
-                          Container(
-                            width: width,
-                            child: Text(
-                              "Date : ${formatDate(DateTime.parse(userInfo.orderSummary[index].date))}",
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.montserrat(
-                                fontSize: 14,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            width: width,
-                            child: Row(
-                              children: [
-                                Text(
-                                  "Total : ",
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 14,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                Icon(
-                                  MdiIcons.currencyInr,
-                                  color: Colors.grey,
-                                  size: 14,
-                                ),
-                                Text(
-                                  "${userInfo.orderSummary[index].total}",
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 14,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            width: width,
-                            child: Row(
-                              children: [
-                                Text(
-                                  "Status : ",
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 14,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                Text(
-                                  "${userInfo.orderSummary[index].status}",
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 14,
-                                    color: Colors.yellow[800],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                        );
+                      },
+                      itemCount: userInfo.orderSummary.length,
                     ),
-                  ),
-                ),
-                itemCount: userInfo.orderSummary.length,
-              ),
             ),
           ],
         ),
